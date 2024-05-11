@@ -1,0 +1,60 @@
+package lab_2;
+
+import org.jetbrains.annotations.*;
+
+import java.io.IOException;
+import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
+/**
+ * Otacza plik przekazany w ścieżce w {@link Stream strumień}, który zwraca słowa większe niż 3
+ * litery (słowa przekonwertowane do jedynie małych liter).
+ * <p>
+ * Jako znaki rozdzielające słowa, traktowane jest wszystko oprócz liter.
+ */
+public class FileWordStreamer {
+
+	private final @NotNull Path filePath;
+
+	/**
+	 * Wersja klasy, która pomija filtrowanie.
+	 */
+	public final @NotNull FileWordStreamer raw;
+
+	public FileWordStreamer(@NotNull URI fileLocation) {
+		this.filePath = Paths.get(fileLocation);
+		this.raw = new Raw(fileLocation);
+	}
+
+	/**
+	 * Tworzy nową instancję strumienia.
+	 */
+	public @Nls @NotNull Stream<String> stream()
+	throws IOException {
+		return Files.lines(this.filePath)
+				.flatMap(line -> Arrays.stream(line.split("[^a-zA-Z]+")))
+				.filter(word -> word.length() >= 3)
+				.map(String::toLowerCase);
+	}
+
+
+	private class Raw extends FileWordStreamer {
+
+		public Raw(@NotNull URI fileLocation) {
+			super(fileLocation);
+		}
+
+		@Override
+		public @Nls @NotNull Stream<String> stream()
+		throws IOException {
+			return Files.lines(FileWordStreamer.this.filePath)
+					.flatMap(line -> Arrays.stream(line.split(" ")))
+					.map(String::toLowerCase);
+		}
+	}
+}
+

@@ -160,3 +160,5 @@ replay_pid*
 */.classpath
 
 # End of https://www.toptal.com/developers/gitignore/api/jetbrains,maven,java
+
+Lab_2/src/main/resources/lab_2/english.200MB.txt
