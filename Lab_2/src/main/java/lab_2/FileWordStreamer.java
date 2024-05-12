@@ -20,14 +20,20 @@ public class FileWordStreamer {
 
 	private final @NotNull Path filePath;
 
+	private FileWordStreamer raw;
+
 	/**
 	 * Wersja klasy, która pomija filtrowanie.
 	 */
-	public final @NotNull FileWordStreamer raw;
+	public @NotNull FileWordStreamer raw() {
+		if (raw == null) {
+			this.raw = new Raw(this.filePath.toUri());
+		}
+		return this.raw;
+	}
 
 	public FileWordStreamer(@NotNull URI fileLocation) {
 		this.filePath = Paths.get(fileLocation);
-		this.raw = new Raw(fileLocation);
 	}
 
 	/**

@@ -20,7 +20,7 @@ class FileWordStreamerTests {
 	void Test_file_word_count_pre_filtering() {
 
 		Assertions.assertDoesNotThrow(() -> {
-			stream = fws.raw.stream();
+			stream = fws.raw().stream();
 		});
 
 		Assertions.assertEquals(
