@@ -4,24 +4,24 @@
 
 Wejdź na chwilę [tutaj](http://pizzachili.dcc.uchile.cl/texts/nlang/).
 
-Tam są skompresowane książki w języku angielskim. Po prostu czysty tekst. Dla ułatwienia, plik,
-który będziecie przetwarzać został pobrany i umieszczony na wikampie (poniżej w załączniku).
+Tam są skompresowane książki w języku angielskim. Po prostu czysty tekst. Dla ułatwienia plik,
+który będziecie przetwarzać, został pobrany i umieszczony na wikampie (poniżej w załączniku).
 
 Proszę rozpakować ręcznie plik i przejrzeć, w jakiej postaci są te książki.
 Plik powinien mieć 200MB.
 
 ## CASE WYKŁADOWY 1 - WCZYTYWANIE PLIKU
 
-Będziemy potrzebować aby odczytać podany plik tekstowy słowo po słowie tak, aby kolejno
+Będziemy potrzebować, aby odczytać podany plik tekstowy słowo po słowie tak, aby kolejno
 je przetworzyć. Sprawdzimy szybkość działania wczytywania słów z pliku w różnych wariantach,
 oraz sprawdzimy zajętość pamięci. Szukamy optymalnego rozwiązania.
 
-Dodatkowe wymaganie - tekst powinien być oczyszczony następująco:
+Dodatkowe wymaganie — tekst powinien być oczyszczony następująco:
 
 * wszystkie litery zamieniamy na małe,
-* usuwamy wszystko co nie jest literą (czyli cyfry, znaki specjalne, przestankowe,
-  apostrofy cudzysłowy, itp),
-* będą nas interesować wyłącznie słowa o długości co najmniej 3 liter.
+* usuwamy wszystko, co nie jest literą (czyli cyfry, znaki specjalne, przestankowe,
+  apostrofy cudzysłowy itp.),
+* będą nas interesować wyłącznie słowa o długości co najmniej 3 litery.
  
 ## CASE WYKŁADOWY 2 - jak znaleźć najczęstsze słowa w pliku?
 
@@ -47,7 +47,7 @@ Algorytm Misry - Griesa.
 * Sprawdź, czy w pliku english.200MB.txt jest 39'177'225 słów.
 * Wykonaj strumieniowo filtr, który kolejno:
   * sprowadzi wszystkie słowa do małych liter,
-  * zamieni każdy znak nie będący literą na spację,
+  * zamieni każdy znak niebędący literą na spację,
   * usunie słowa krótsze niż 3 znaki.
 * Sprawdź, czy w pliku english.200MB.txt jest 29'250'532 przefiltrowanych słów.
 
@@ -58,7 +58,7 @@ Algorytm Misry - Griesa.
 * tworzymy puste na starcie słowniki *D1*, *D2*,
 
 1. Przebieg pierwszy:
-   * Pobierz kolejne słowo ze strumienia sprawdzając czy występuje w słowniku *D1*.
+   * Pobierz kolejne słowo ze strumienia, sprawdzając, czy występuje w słowniku *D1*.
    * Jeśli liczba elementów w słowniku jest < *k* – 1:
      * jeśli słowo nie jest *kluczem* słownika, to stwórz nowy element o takim *kluczu*
        i nadaj mu *wartość* 1,
