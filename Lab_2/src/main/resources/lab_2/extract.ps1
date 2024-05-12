@@ -1,0 +1,1 @@
+7z x "$PSScriptRoot\english.200MB.zip" -o"$PSScriptRoot"
