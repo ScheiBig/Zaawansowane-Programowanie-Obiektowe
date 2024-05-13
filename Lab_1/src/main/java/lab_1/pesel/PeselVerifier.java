@@ -26,21 +26,14 @@ public class PeselVerifier {
 	 * Rzuca wyjątek z rodziny {@link PeselException} w przypadku błędów parsowania
 	 */
 	public static PeselData parsePeselData(String pesel)
-	throws
-			PeselException {
+	throws PeselException {
 
 		validateLength(pesel);
 		validateCharSet(pesel);
 		var yearMonth = validateMonth(pesel);
-		var year = Integer.parseInt(
-				pesel.substring(
-						0,
-						2
-				),
-				10
-		);
+		var year = Integer.parseInt(pesel.substring(0, 2), 10);
 
-		year += switch (yearMonth.yearOffser) {
+		year += switch (yearMonth.yearOffset) {
 			case 8 -> 1800;
 			case 0 -> 1900;
 			case 2 -> 2000;
@@ -52,13 +45,7 @@ public class PeselVerifier {
 		format.setLenient(false);
 
 		Date date;
-		var day = Integer.parseInt(
-				pesel.substring(
-						4,
-						6
-				),
-				10
-		);
+		var day = Integer.parseInt(pesel.substring(4, 6), 10);
 
 		try {
 			date = format.parse(year + "-" + yearMonth.month + "-" + day);
@@ -69,44 +56,29 @@ public class PeselVerifier {
 		Gender gender = Gender.of(pesel.charAt(9));
 
 		int controlSum = calculateCotrolSum(pesel);
-		int expectedSum = Character.digit(
-				pesel.charAt(10),
-				10
-		);
+		int expectedSum = Character.digit(pesel.charAt(10), 10);
 
 		if (controlSum != expectedSum) {
-			throw new PeselException.ControlSumException(
-					expectedSum,
-					controlSum
-			);
+			throw new PeselException.ControlSumException(expectedSum, controlSum);
 		}
 
-		return new PeselData(
-				date,
-				gender
-		);
+		return new PeselData(date, gender);
 	}
 
 	private static int calculateCotrolSum(String pesel) {
-		int[] weights = new int[]{
-				1, 3, 7, 9, 1, 3, 7, 9, 1, 3
-		};
+		int[] weights = new int[]{1, 3, 7, 9, 1, 3, 7, 9, 1, 3};
 
 		int sum = 0;
 
 		for (int i = 0; i < pesel.length() - 1; i++) {
-			sum += weights[i] * Character.digit(
-					pesel.charAt(i),
-					10
-			);
+			sum += weights[i] * Character.digit(pesel.charAt(i), 10);
 		}
 
 		return 10 - sum % 10;
 	}
 
 	private static void validateLength(String pesel)
-	throws
-			PeselException.LengthException {
+	throws PeselException.LengthException {
 		try {
 			if (pesel.length() != 11) {
 				throw new PeselException.LengthException(pesel.length());
@@ -117,37 +89,23 @@ public class PeselVerifier {
 	}
 
 	private static void validateCharSet(String pesel)
-	throws
-			PeselException.IllegalCharactersException {
+	throws PeselException.IllegalCharactersException {
 		int i = 0;
 		for (char c : pesel.toCharArray()) {
 			if (!Character.isDigit(c)) {
-				throw new PeselException.IllegalCharactersException(
-						c,
-						i
-				);
+				throw new PeselException.IllegalCharactersException(c, i);
 			}
 			i++;
 		}
 	}
 
-	private record YearMonth(int yearOffser, int month) {}
+	private record YearMonth(int yearOffset, int month) {}
 
 	private static YearMonth validateMonth(String pesel)
-	throws
-			PeselException.MonthException {
-		String str = pesel.substring(
-				2,
-				4
-		);
-		int offset = Character.digit(
-				str.charAt(0),
-				10
-		);
-		int month = Character.digit(
-				str.charAt(1),
-				10
-		);
+	throws PeselException.MonthException {
+		String str = pesel.substring(2, 4);
+		int offset = Character.digit(str.charAt(0), 10);
+		int month = Character.digit(str.charAt(1), 10);
 
 		if (offset % 2 != 0) {
 			month += 10;
@@ -158,9 +116,6 @@ public class PeselVerifier {
 			throw new PeselException.MonthException(month);
 		}
 
-		return new YearMonth(
-				offset,
-				month
-		);
+		return new YearMonth(offset, month);
 	}
 }

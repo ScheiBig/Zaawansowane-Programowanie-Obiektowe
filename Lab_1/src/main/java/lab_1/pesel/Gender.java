@@ -17,5 +17,4 @@ public enum Gender {
 	public static Gender of(char peselCharacter) {
 		return of(Character.digit(peselCharacter, 10));
 	}
-
 }

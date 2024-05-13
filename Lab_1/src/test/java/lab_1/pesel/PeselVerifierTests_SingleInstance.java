@@ -23,9 +23,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.NullException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -38,9 +36,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.LengthException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -53,9 +49,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.LengthException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -68,9 +62,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.LengthException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -83,9 +75,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.IllegalCharactersException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -98,9 +88,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.MonthException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -113,9 +101,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.MonthException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -128,9 +114,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.DayException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -143,9 +127,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.DayException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 
@@ -158,9 +140,7 @@ class PeselVerifierTests_SingleInstance {
 
 		Assertions.assertThrows(
 				PeselException.ControlSumException.class,
-				() -> {
-					PeselVerifier.parsePeselData(pesel);
-				}
+				() -> PeselVerifier.parsePeselData(pesel)
 		);
 	}
 

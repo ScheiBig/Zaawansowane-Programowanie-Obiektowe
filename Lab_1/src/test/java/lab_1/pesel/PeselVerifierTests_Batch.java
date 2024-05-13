@@ -34,9 +34,7 @@ public class PeselVerifierTests_Batch {
 		} else {
 			Assertions.assertThrows(
 					PeselException.LengthException.class,
-					() -> {
-						PeselVerifier.parsePeselData(input);
-					}
+					() -> PeselVerifier.parsePeselData(input)
 			);
 		}
 	}
@@ -58,9 +56,7 @@ public class PeselVerifierTests_Batch {
 		} else {
 			Assertions.assertThrows(
 					PeselException.IllegalCharactersException.class,
-					() -> {
-						PeselVerifier.parsePeselData(input);
-					}
+					() -> PeselVerifier.parsePeselData(input)
 			);
 		}
 	}
@@ -82,9 +78,7 @@ public class PeselVerifierTests_Batch {
 		} else {
 			Assertions.assertThrows(
 					PeselException.MonthException.class,
-					() -> {
-						PeselVerifier.parsePeselData(input);
-					}
+					() -> PeselVerifier.parsePeselData(input)
 			);
 		}
 	}
@@ -106,9 +100,7 @@ public class PeselVerifierTests_Batch {
 		} else {
 			Assertions.assertThrows(
 					PeselException.DayException.class,
-					() -> {
-						PeselVerifier.parsePeselData(input);
-					}
+					() -> PeselVerifier.parsePeselData(input)
 			);
 		}
 	}
@@ -130,9 +122,7 @@ public class PeselVerifierTests_Batch {
 		} else {
 			Assertions.assertThrows(
 					PeselException.ControlSumException.class,
-					() -> {
-						PeselVerifier.parsePeselData(input);
-					}
+					() -> PeselVerifier.parsePeselData(input)
 			);
 		}
 	}
