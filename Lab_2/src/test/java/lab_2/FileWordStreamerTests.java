@@ -27,6 +27,8 @@ class FileWordStreamerTests {
 				39_177_225,
 				stream.count()
 		);
+
+		stream.close();
 	}
 
 	@Test
@@ -39,5 +41,7 @@ class FileWordStreamerTests {
 				29_250_532,
 				stream.count()
 		);
+
+		stream.close();
 	}
 }
