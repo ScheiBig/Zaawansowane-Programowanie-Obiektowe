@@ -4,6 +4,8 @@ import org.jetbrains.annotations.*;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -34,6 +36,10 @@ public class FileWordStreamer {
 
 	public FileWordStreamer(@NotNull URI fileLocation) {
 		this.filePath = Paths.get(fileLocation);
+	}
+	public FileWordStreamer(@NotNull URL fileLocation)
+	throws URISyntaxException {
+		this.filePath = Paths.get(fileLocation.toURI());
 	}
 
 	/**
