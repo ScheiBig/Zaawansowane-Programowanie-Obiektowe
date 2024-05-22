@@ -1,20 +1,17 @@
 package lab_2;
 
-import org.junit.jupiter.api.*;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Comparator;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ActualSummaryGenerator {
 
-	@Test
-	void generate()
+	public static void main(String[] args)
 	throws URISyntaxException, IOException {
 		var stream = new FileWordStreamer(Main.english_200MB_txt).stream();
 
@@ -32,6 +29,5 @@ public class ActualSummaryGenerator {
 
 		Files.write(Path.of("src/test/resources/lab_2/summary.csv"), summaries.reversed(),
 				StandardCharsets.UTF_8);
-
 	}
 }
