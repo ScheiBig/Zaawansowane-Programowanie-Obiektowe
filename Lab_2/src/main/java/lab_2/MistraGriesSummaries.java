@@ -2,6 +2,9 @@ package lab_2;
 
 import org.jetbrains.annotations.Contract;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +16,6 @@ public class MistraGriesSummaries<T extends Comparable<T>> {
 
 	private final Supplier<Stream<T>> valueStreamSupplier;
 	private final int bufferSize;
-	private final double targetFrequency;
 
 	private Map<T, Integer> buffer;
 
@@ -21,25 +23,45 @@ public class MistraGriesSummaries<T extends Comparable<T>> {
 
 	public MistraGriesSummaries(
 			Supplier<Stream<T>> valueStreamSupplier,
-			int bufferSize,
-			double targetFrequency
+			int bufferSize
 	) {
 		if (bufferSize < 1) {
 			throw new IllegalArgumentException("Size of buffer `k` cannot be less than 1");
-		}
-		if (0.0 > targetFrequency || targetFrequency > 1.0) {
-			throw new IllegalArgumentException("Target frequency must be in range [0..1]");
 		}
 
 		this.valueStreamSupplier = valueStreamSupplier;
 		this.bufferSize = bufferSize;
 		this.buffer = new HashMap<>();
-		this.targetFrequency = targetFrequency;
+	}
+
+	public MistraGriesSummaries(
+			ResourceSupplier<Stream<T>> valueStreamResourceSupplier,
+			int bufferSize
+	)
+	throws IOException {
+		if (bufferSize < 1) {
+			throw new IllegalArgumentException("Size of buffer `k` cannot be less than 1");
+		}
+		// Check if stream is able to be supplied
+		valueStreamResourceSupplier.get().close();
+
+		this.valueStreamSupplier = () -> {
+			try {
+				return valueStreamResourceSupplier.get();
+			} catch (IOException e) {
+				throw new IllegalStateException("Stream should always be able to produce", e);
+			}
+		};
+
+		this.bufferSize = bufferSize;
+		this.buffer = new HashMap<>();
 	}
 
 	@Contract("-> this")
 	public MistraGriesSummaries<T> calculated() {
-		this.valueStreamSupplier.get().forEach(elem -> {
+		var stream = this.valueStreamSupplier.get();
+
+		stream.forEach(elem -> {
 			this.keyCount++;
 			if (this.buffer.containsKey(elem)) {
 				this.buffer.put(elem, this.buffer.get(elem) + 1);
@@ -54,6 +76,7 @@ public class MistraGriesSummaries<T extends Comparable<T>> {
 			}
 		});
 
+		stream.close();
 		return this;
 	}
 
@@ -63,20 +86,24 @@ public class MistraGriesSummaries<T extends Comparable<T>> {
 				.map(integer -> Map.entry(integer, 0))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-		this.valueStreamSupplier.get().forEach(elem -> {
+		var stream = this.valueStreamSupplier.get();
+		stream.forEach(elem -> {
 			if (countBuffer.containsKey(elem)) {
 				countBuffer.put(elem, countBuffer.get(elem) + 1);
 			}
 		});
 
-		return countBuffer.entrySet()
+		stream.close();
+		var summaries = countBuffer.entrySet()
 				.stream()
 				.map(e -> new Summary<>(
 						e.getKey(),
 						(double) e.getValue() / this.keyCount,
 						e.getValue()
 				))
+				.sorted(Comparator.comparingDouble(Summary::occurrenceFrequency))
 				.toList();
+		return summaries.reversed();
 	}
 
 	public record Summary<T>(T key, double occurrenceFrequency, long occurrenceCount) {}
