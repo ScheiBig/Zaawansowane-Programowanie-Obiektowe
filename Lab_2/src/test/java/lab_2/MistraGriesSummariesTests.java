@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class MistraGriesSummariesTest {
+class MistraGriesSummariesTests {
 
 	static FileWordStreamer fws;
 	static MistraGriesSummaries<String> msSummary;
