@@ -1,19 +1,19 @@
 package lab_2;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
 
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MistraGriesSummariesTest {
 
-	FileWordStreamer fws;
-	MistraGriesSummaries<String> msSummary;
+	static FileWordStreamer fws;
+	static MistraGriesSummaries<String> msSummary;
 
-	@Test
-	void Test_summary_is_working() {
-
+	@BeforeAll
+	static void Test_summary_is_initializing() {
 		Assertions.assertDoesNotThrow(() -> {
 			fws = new FileWordStreamer(Main.english_200MB_txt);
 		});
@@ -24,7 +24,10 @@ class MistraGriesSummariesTest {
 					100
 			);
 		});
+	}
 
+	@Test
+	void Test_summary_is_working() {
 		var summaries = msSummary.calculated().summaries();
 
 		var actualSummaries = summaries.subList(0, 6)
@@ -42,5 +45,14 @@ class MistraGriesSummariesTest {
 		);
 
 		Assertions.assertLinesMatch(expectedSummaries, actualSummaries);
+	}
+
+
+	@Test
+	void Test_summary_has_correct_speed() {
+		Assertions.assertTimeout(
+				Duration.ofSeconds(25),
+				() -> msSummary.calculated().summaries()
+		);
 	}
 }
