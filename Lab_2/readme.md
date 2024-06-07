@@ -1,4 +1,4 @@
-# Zadanie 2 - przetwarzanie strumieniowe
+# Zadanie 2 — przetwarzanie strumieniowe
 
 ## Dane źródłowe
 
@@ -10,7 +10,7 @@ który będziecie przetwarzać, został pobrany i umieszczony na wikampie (poni�
 Proszę rozpakować ręcznie plik i przejrzeć, w jakiej postaci są te książki.
 Plik powinien mieć 200MB.
 
-## CASE WYKŁADOWY 1 - WCZYTYWANIE PLIKU
+## CASE 1 — wczytywanie pliku
 
 Będziemy potrzebować, aby odczytać podany plik tekstowy słowo po słowie tak, aby kolejno
 je przetworzyć. Sprawdzimy szybkość działania wczytywania słów z pliku w różnych wariantach,
@@ -22,8 +22,8 @@ Dodatkowe wymaganie — tekst powinien być oczyszczony następująco:
 * usuwamy wszystko, co nie jest literą (czyli cyfry, znaki specjalne, przestankowe,
   apostrofy cudzysłowy itp.),
 * będą nas interesować wyłącznie słowa o długości co najmniej 3 litery.
- 
-## CASE WYKŁADOWY 2 - jak znaleźć najczęstsze słowa w pliku?
+
+## CASE 2 — jak znaleźć najczęstsze słowa w pliku?
 
 Znajdźmy słowa występujące co najmniej N/k razy, gdzie k jest parametrem,
 a N liczbą wszystkich słów.
@@ -38,9 +38,9 @@ pod względem szybkości działania oraz zajętości pamięci.
 Własne pomysły studentów.
 
 ### Podejście 3
-Algorytm Misry - Griesa.
+Algorytm Misry-Griesa.
 
-## ZADANIE NA OCENĘ
+## Zadanie laboratoryjne
 
 ### Polecenia i propozycje testów jednostkowych
 
@@ -66,20 +66,20 @@ Algorytm Misry - Griesa.
    * Jeśli liczba elementów w słowniku jest *k* - 1:
      * jeśli słowo jest *kluczem* słownika, to zwiększ *wartość* tego elementu o 1,
      * jeśli słowo jest nowe (tj. nie jest kluczem w *D1*), to nie dodajemy go do słownika.
-       Wartość każdego elementu w słowniku zmniejszamy o 1. Jeśli któraś z wartości 
+       Wartość każdego elementu w słowniku zmniejszamy o 1. Jeśli któraś z wartości
        stanie się zerem, to usuwamy cały element (tj. parę *klucz-wartość*).
 2. Przebieg drugi:
    * Pobierz słowo ze strumienia,
-   * Jeśli słowo występuje w *D1*, to utwórz w *D2* element *słowo->liczba* wystąpień 
+   * Jeśli słowo występuje w *D1*, to utwórz w *D2* element *słowo->liczba* wystąpień
      (lub zaktualizuj)
-3. Na końcu: 
+3. Na końcu:
    * Przefiltruj wynikowy słownik *D2*, pozostawiając w tym tylko te pary *klucz-wartość*,
      dla których *wartość* > *n*/*k*. \
-     **Uwaga:** *n* nie jest podane na wejściu, więc wcześniej ("po drodze") musisz 
+     **Uwaga:** *n* nie jest podane na wejściu, więc wcześniej ("po drodze") musisz
      znaleźć jego wartość.
 
 ### Algorytm główny
-Wykonaj algorytm *M-G* i uruchom go na `english.200.MB`, filtrowanym w trakcie 
+Wykonaj algorytm *M-G* i uruchom go na `english.200.MB`, filtrowanym w trakcie
 wczytywania, dla `k = 100`.
 
 #### Warunki:

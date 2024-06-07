@@ -1,4 +1,4 @@
-# Zadanie 1 - Testy jednostkowe
+# Zadanie 1 — Testy jednostkowe
 
 ## CASE:
 Zaprojektuj aplikację konsolową do sprawdzania numeru PESEL, podanego z linii poleceń.
@@ -16,9 +16,9 @@ z wykorzystaniem testów jednostkowych JUnit. Zalecenia:
 Wykonaj klasy dla testów jednostkowych przy użyciu JUnit. Testy mają sprawdzić następujące warunki:
 
 * wprowadzamy ciąg znaków o niewłaściwym formacie — funkcja ma rzucić wyjątek,
-* wprowadzamy właściwy PESEL — funkcja sprawdzająca poprawność ma zwrócić prawdę. Funkcja 
+* wprowadzamy właściwy PESEL — funkcja sprawdzająca poprawność ma zwrócić prawdę. Funkcja
   nie może rzucić wyjątku,
-* wprowadzamy błędny PESEL (ale we właściwym formacie) - funkcja sprawdzająca poprawność 
+* wprowadzamy błędny PESEL (ale we właściwym formacie) — funkcja sprawdzająca poprawność
   ma zwrócić fałsz. Funkcja nie może rzucić wyjątku,
 * wprowadzamy numer dla kobiety/mężczyzny — funkcja ma zwrócić K lub M,
 * wprowadzamy poprawny numer — funkcja sprawdza, czy zgadza się data urodzenia oraz płcią.
