@@ -1,5 +1,7 @@
 package lab_3;
 
+import lab_3.student.MainStudent;
+
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Scanner;
@@ -15,7 +17,10 @@ public class Main {
 						MainCalc.mainCalc(Arrays.copyOfRange(args, 1, args.length - 1));
 						return;
 					case "student":
+						MainStudent.mainStudent(Arrays.copyOfRange(args, 1, args.length - 1));
 						return;
+					default:
+						throw new IllegalArgumentException("Unknown program type");
 				}
 			} else {
 				var sc = new Scanner(System.in);
@@ -25,7 +30,10 @@ public class Main {
 						MainCalc.mainCalc(null);
 						return;
 					case "student":
+						MainStudent.mainStudent(null);
 						return;
+					default:
+						throw new IllegalArgumentException("Unknown program type");
 				}
 			}
 		} catch (Throwable e) {
