@@ -78,7 +78,7 @@ public class MainCalc {
 						operation);
 			}
 
-			System.out.print(operation + "( " + firstOp + " ) = " + op.invoke(null, firstOp));
+			System.out.println(operation + "( " + firstOp + " ) = " + op.invoke(null, firstOp));
 			return;
 		}
 
@@ -112,7 +112,7 @@ public class MainCalc {
 					operation);
 		}
 
-		System.out.print(operation +
+		System.out.println(operation +
 				"( " +
 				firstOp +
 				", " +
