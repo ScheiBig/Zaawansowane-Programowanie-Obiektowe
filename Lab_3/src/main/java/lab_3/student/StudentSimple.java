@@ -8,6 +8,7 @@ package lab_3.student;
 		degree = "Bachelor",
 		fullTime = true)
 public class StudentSimple
+		extends ObjectToString
 {
 	private String name;
 
