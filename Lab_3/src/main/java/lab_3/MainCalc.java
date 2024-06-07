@@ -24,6 +24,11 @@ public class MainCalc {
 			IllegalArgumentException,
 			UnsupportedOperationException {
 
+		currentArg = null;
+		firstOp = 0;
+		secondOp = 0;
+		operation = null;
+
 		Iterator<String> argz;
 		if (args == null) {
 			argz = Args.stdin();
