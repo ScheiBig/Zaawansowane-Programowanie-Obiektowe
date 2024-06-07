@@ -56,14 +56,14 @@ Przykładowe użycie:
 ```java
 @DefaultStudent //lub @DefaultStudent(imie="Jan", nazwisko="Nowak") //domyślne wartości przykrywamy własnymi
 public class Student {
-public Student() {
-// zawartość konstruktora domyślnego
-}
-//zawartość klasy Student
+    public Student() {
+        // zawartość konstruktora domyślnego
+    }
+    //zawartość klasy Student
 }
 ```
 
-#### Wyjaśnienie - Adnotacje
+#### Wyjaśnienie — Adnotacje
 * adnotacje możemy podzielić na wbudowane oraz własne; adnotacja własna jest interfejsem,
 * adnotacje mogą być bezparametrowe lub mieć parametr (o nazwie value) lub więcej parametrów 
   (o różnych nazwach i typach) i mogą mieć one wartości domyślne,
