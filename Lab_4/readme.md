@@ -4,7 +4,7 @@
 
 ### Wstęp
 
-Programy działające na wątkach często pracują w trybie producent — konsument. Jest to najczęściej
+Programy działające na wątkach często pracują w trybie producent-konsument. Jest to najczęściej
 układ, który sam reguluje swoją szybkość działania dzięki zastosowaniu kolejki
 synchronizowanej *FIFO*.
 
