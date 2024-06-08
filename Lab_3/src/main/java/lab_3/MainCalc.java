@@ -2,7 +2,7 @@ package lab_3;
 
 import lab_3.number.NumberOps;
 import lab_3.util.Args;
-import lab_3.util.Res;
+import lab_3.result.Res;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
