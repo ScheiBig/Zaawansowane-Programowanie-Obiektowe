@@ -1,4 +1,4 @@
-package lab_3.util;
+package lab_3.result;
 
 import java.util.Optional;
 

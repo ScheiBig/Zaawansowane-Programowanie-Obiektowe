@@ -1,4 +1,4 @@
-package lab_3.util;
+package lab_3.result;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -96,6 +96,23 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 	}
 
 	/**
+	 * Creates result, that wraps errors produced by <code>call</code>.
+	 * <p>
+	 * Rules of {@link Res#of Res::of} apply to the <code>call</code>.
+	 * @param call Code that throws
+	 * @return New result
+	 */
+	public static Result<Void, Throwable> from(
+			@NotNull ThrowingRunnable call
+	) {
+		try {
+			return new Res<>(null, null);
+		} catch (Throwable e) {
+			return new Res<>(null, e);
+		}
+	}
+
+	/**
 	 * Implementation of {@link Result} type, that can hold valid empty values as {@link Optional}s.
 	 * @param <V> Type of value
 	 * @param <E> Type of error
@@ -172,12 +189,13 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 		 * @param <T> Type of Error
 		 */
 		public static <T extends Throwable> Result<Optional<Void>, T> failure(@NotNull T error) {
-			return new Res<>(null, error);
+			return new op<>(null, error);
 		}
+
 		/**
 		 * Creates result, that wraps return values / errors produced by <code>call</code>.
 		 * <p>
-		 * Rules of {@link Res.op#of Res::op::of} apply to the <code>call</code>.
+		 * Rules of {@link op#of Res::op::of} apply to the <code>call</code>.
 		 * @param call Code that returns / throws
 		 * @return New result
 		 * @param <V> Type of value
@@ -188,7 +206,24 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 			try {
 				return success(call.get());
 			} catch (Throwable e) {
-				return new Res<>(null, e);
+				return new op<>(null, e);
+			}
+		}
+
+		/**
+		 * Creates result, that wraps errors produced by <code>call</code>.
+		 * <p>
+		 * Rules of {@link Res#of Res::of} apply to the <code>call</code>.
+		 * @param call Code that throws
+		 * @return New result
+		 */
+		public static Result<Optional<Void>, Throwable> from(
+				@NotNull ThrowingRunnable call
+		) {
+			try {
+				return success(null);
+			} catch (Throwable e) {
+				return new op<>(null, e);
 			}
 		}
 	}
