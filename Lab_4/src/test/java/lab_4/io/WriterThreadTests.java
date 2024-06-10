@@ -1,14 +1,13 @@
 package lab_4.io;
 
+import lab_4.concurrent.Semaphore;
 import lab_4.concurrent.locks.Monitor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.*;
+import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
-import java.util.concurrent.Semaphore;
 
 class WriterThreadTests {
 
@@ -35,32 +34,9 @@ class WriterThreadTests {
 			Assertions.assertDoesNotThrow(() -> sem.acquire());
 
 			Assertions.assertDoesNotThrow(() -> {
-				writerThread = new WriterThread(output_w, buffer, monitor, sem);
+				writerThread = new WriterThread(output_w, null, buffer, monitor, sem);
 				writerThread.start();
 			});
-
-//			try {
-//				for (char c : input.toCharArray()) {
-//					synchronized (this.buffer) {
-//						while (true) {
-//							if (!Objects.isNull(this.buffer[0])) {
-//								this.buffer.wait();
-//							} else {
-//								break;
-//							}
-//						}
-//						this.buffer[0] = c;
-//						this.buffer.notify();
-//						System.err.println("Character emission: " + c);
-//					}
-//				}
-//				sem.release();
-//				synchronized (this.buffer) {
-//					this.buffer.notify();
-//				}
-//			} catch (InterruptedException e) {
-//				throw new RuntimeException(e);
-//			}
 
 
 			try {
@@ -71,7 +47,7 @@ class WriterThreadTests {
 							monitor.await();
 						}
 						this.buffer[0] = c;
-						System.out.println("-> " + this.buffer[0]);
+//						System.out.println("-> " + this.buffer[0]);
 						this.monitor.signal();
 					} finally {
 						monitor.unlock();

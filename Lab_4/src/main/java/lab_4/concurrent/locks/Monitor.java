@@ -9,21 +9,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Monitor
 		extends ReentrantLock
-		implements Condition, AutoCloseable
+		implements Condition
 {
 
 	private final ReentrantLock lock;
 	private final Condition cond;
 
 	public Monitor() {
-		this(new ReentrantLock(true));
-	}
-
-	public Monitor(
-			ReentrantLock lock
-	) {
-		this.lock = lock;
-		this.cond = lock.newCondition();
+		this.lock = new ReentrantLock(true);
+		this.cond = this.lock.newCondition();
 	}
 
 	@Override
@@ -131,15 +125,5 @@ public class Monitor
 	@Override
 	public void signalAll() {
 		cond.signalAll();
-	}
-
-	public Monitor synchronize() {
-		this.lock();
-		return this;
-	}
-
-	@Override
-	public void close() {
-		this.unlock();
 	}
 }

@@ -1,6 +1,7 @@
 package lab_4.io;
 
 import lab_4.Main;
+import lab_4.concurrent.Semaphore;
 import lab_4.concurrent.locks.Monitor;
 import lab_4.result.Res;
 import org.junit.jupiter.api.Assertions;
@@ -11,8 +12,6 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.LinkedList;
-import java.util.Objects;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -64,13 +63,13 @@ class ReaderThreadTests {
 
 			// Let ReaderThreads into dancefloor
 			Assertions.assertDoesNotThrow(() -> {
-				new ReaderThread(test1_txt, buffer, mon, sem).start();
+				new ReaderThread(test1_txt, null, buffer, mon, sem).start();
 			});
 			Assertions.assertDoesNotThrow(() -> {
-				new ReaderThread(test2_txt, buffer, mon, sem).start();
+				new ReaderThread(test2_txt, null, buffer, mon, sem).start();
 			});
 			Assertions.assertDoesNotThrow(() -> {
-				new ReaderThread(test3_txt, buffer, mon, sem).start();
+				new ReaderThread(test3_txt, null, buffer, mon, sem).start();
 			});
 
 			// Join the dance, process inputs
