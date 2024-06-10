@@ -30,6 +30,7 @@ public class ReaderThread
 		this.sem = sem;
 
 		this.sem.acquire();
+		this.setName("ReaderThread :: " + this.getName());
 	}
 
 	@Override
