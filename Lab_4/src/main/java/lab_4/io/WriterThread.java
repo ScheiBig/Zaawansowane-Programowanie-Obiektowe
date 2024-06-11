@@ -20,7 +20,7 @@ public class WriterThread
 {
 	private final BufferedWriter file;
 	private final Character[] buffer;
-	private final Monitor mon;
+	private final Monitor monitor;
 	private final Semaphore sem;
 	public final Stage window;
 	private final StringProperty windowText;
@@ -30,17 +30,15 @@ public class WriterThread
 			BufferedWriter file,
 			String name,
 			Character[] buffer,
-			Monitor mon,
-			Semaphore sem
+			Monitor monitor,
 	) {
 		this.file = file;
 		this.buffer = buffer;
-		this.mon = mon;
-		this.sem = sem;
+		this.monitor = monitor;
 
 		var ta = new TextArea();
 		ta.setEditable(false);
-		ta.setFont(Font.font("monospace", 16));
+		ta.setFont(Font.font("monospace", 13));
 
 		this.windowText = ta.textProperty();
 		this.window = new Stage();
@@ -56,10 +54,10 @@ public class WriterThread
 		try {
 			outer:
 			while (true) {
-				mon.lock();
+				monitor.lock();
 				try {
 					while (this.buffer[0] == null) {
-						if (!mon.await(Main.ASSUME_THREAD_DEAD__MS, TimeUnit.MILLISECONDS) &&
+						if (!monitor.await(Main.ASSUME_THREAD_DEAD__MS, TimeUnit.MILLISECONDS) &&
 								sem.tryAcquire(
 										sem.permitStorage(),
 										Main.ASSUME_THREAD_DEAD__MS,
@@ -70,18 +68,19 @@ public class WriterThread
 					}
 //					System.out.println("<- " + this.buffer[0]);
 					file.write(this.buffer[0]);
-					Platform.runLater(() -> {
-						var s = this.buffer[0].toString();
+					var s = this.buffer[0].toString()
+							.equals("\n") ? "↲\n" : this.buffer[0].toString();
+					Platform.runLater((() -> {
 						this.windowText.setValue(this.windowText.getValue() + s);
-					});
+					}));
 					this.buffer[0] = null;
-					mon.signal();
+					monitor.signal();
 				} finally {
-					mon.unlock();
+					monitor.unlock();
 				}
 			}
 			file.flush();
-			this.window.setTitle("ZAKOŃCZONO: " + this.window.getTitle());
+			Platform.runLater(() -> this.window.setTitle("ZAKOŃCZONO: " + this.window.getTitle()));
 		} catch (InterruptedException | IOException e) {
 			throw new RuntimeException(e);
 		}

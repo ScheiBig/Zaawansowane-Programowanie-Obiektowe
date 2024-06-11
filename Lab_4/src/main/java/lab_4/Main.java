@@ -1,6 +1,7 @@
 package lab_4;
 
 import javafx.application.Application;
+import javafx.event.Event;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -51,6 +52,7 @@ public class Main
 	}
 
 	public static final long ASSUME_THREAD_DEAD__MS = 25;
+	public static final long BOUNCE__MS = 10;
 
 	public static void main(String[] args) {
 		launch(args);
@@ -66,6 +68,7 @@ public class Main
 		stage.show();
 		stage.setX(20);
 		stage.setY(20);
+		stage.setAlwaysOnTop(true);
 		l.setText("Okno główne aplikacji\n" +
 				"Zamknięcie tego okna spowoduje bezpieczne zamknięcie aplikacji\n" +
 				"Kliknij tutaj aby uruchomić program");
@@ -88,6 +91,7 @@ public class Main
 		out.window.setX(20 + stage.getWidth() + 20);
 		out.window.setY(20);
 		out.window.show();
+		out.window.setAlwaysOnTop(true);
 
 		var readers = new ArrayList<ReaderThread>();
 
@@ -112,6 +116,7 @@ public class Main
 						20 +
 						(rt.window.getWidth() + 20) * i);
 				rt.window.setY(20);
+				rt.window.setAlwaysOnTop(true);
 
 			} catch (InterruptedException | URISyntaxException | IOException e) {
 				throw new RuntimeException(e);
@@ -127,6 +132,7 @@ public class Main
 		l.setOnMouseClicked(e -> {
 			readers.forEach(Thread::start);
 			out.start();
+			l.setOnMouseClicked(Event::consume);
 		});
 
 		System.out.println(this.getParameters()

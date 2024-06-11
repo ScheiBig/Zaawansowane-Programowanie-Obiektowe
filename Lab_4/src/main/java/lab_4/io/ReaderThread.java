@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import lab_4.Main;
 import lab_4.concurrent.Semaphore;
 import lab_4.concurrent.locks.Monitor;
 
@@ -40,7 +41,7 @@ public class ReaderThread
 
 		var ta = new TextArea();
 		ta.setEditable(false);
-		ta.setFont(Font.font("monospace", 16));
+		ta.setFont(Font.font("monospace", 13));
 
 		this.windowText = ta.textProperty();
 		this.window = new Stage();
@@ -67,18 +68,20 @@ public class ReaderThread
 						monitor.await();
 					}
 					this.buffer[0] = (char) c;
+					var s = this.buffer[0].toString()
+							.equals("\n") ? "↲\n" : this.buffer[0].toString();
+
 					Platform.runLater(() -> {
-						var s = this.buffer[0].toString();
 						this.windowText.setValue(this.windowText.getValue() + s);
 					});
-					sleep(250);
+					sleep(Main.BOUNCE__MS);
 //					System.out.println("-> " + this.buffer[0]);
 					this.monitor.signal();
 				} finally {
 					monitor.unlock();
 				}
 			}
-			this.window.setTitle("ZAKOŃCZONO: " + this.window.getTitle());
+			Platform.runLater(() -> this.window.setTitle("ZAKOŃCZONO: " + this.window.getTitle()));
 		} catch (IOException | InterruptedException e) {
 			throw new RuntimeException(e);
 		}
