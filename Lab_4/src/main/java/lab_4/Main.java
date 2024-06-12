@@ -1,17 +1,5 @@
 package lab_4;
 
-import javafx.application.Application;
-import javafx.event.Event;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
-import lab_4.concurrent.Semaphore;
-import lab_4.concurrent.locks.Monitor;
-import lab_4.io.ReaderThread;
-import lab_4.io.WriterThread;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -23,6 +11,24 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.event.Event;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Stage;
+import lab_4.concurrent.Semaphore;
+import lab_4.concurrent.locks.TwoWayMonitor;
+import lab_4.io.BufferingMode;
+import lab_4.io.ReaderThread;
+import lab_4.io.WriterThread;
+
 public class Main
 		extends Application
 {
@@ -33,7 +39,7 @@ public class Main
 	static {
 		try {
 			pliki = new ArrayList<>();
-			Arrays.stream(new File("src/main/resources/in").listFiles())
+			Arrays.stream(new File("src/main/resources/in2").listFiles())
 					.map(File::toURI)
 					.map(uri -> {
 						try {
@@ -61,23 +67,39 @@ public class Main
 	@Override
 	public void start(Stage stage)
 	throws URISyntaxException, IOException, InterruptedException {
-		var l = new Label();
-		var scene = new Scene(l, 360, 240);
+		var vbox = new VBox();
+		var hbox = new HBox();
+		var label = new Label();
+		var scene = new Scene(vbox, 360, 240);
+		var options =
+				FXCollections.observableArrayList(BufferingMode.values());
+		var comboBox = new ComboBox<>(options);
+		var button = new Button("Uruchom");
+
 		stage.setTitle("Zadanie 1");
 		stage.setScene(scene);
 		stage.show();
 		stage.setX(20);
 		stage.setY(20);
 		stage.setAlwaysOnTop(true);
-		l.setText("Okno główne aplikacji\n" +
-				"Zamknięcie tego okna spowoduje bezpieczne zamknięcie aplikacji\n" +
-				"Kliknij tutaj aby uruchomić program");
-		l.setAlignment(Pos.CENTER);
-		l.setTextAlignment(TextAlignment.CENTER);
 
-		var waitGroup = new Semaphore(pliki.size());
-		var monitor = new Monitor();
+		label.setText("Okno główne aplikacji\n" + "Zamknięcie tego okna spowoduje bezpieczne " +
+				"zamknięcie aplikacji\n" + "Wybierz tryb programu, i uruchom:");
+		label.setAlignment(Pos.CENTER);
+		label.setTextAlignment(TextAlignment.CENTER);
+
+		vbox.getChildren()
+				.addAll(label, hbox);
+		hbox.getChildren()
+				.addAll(comboBox, button);
+
+		comboBox.setValue(BufferingMode.ByChar);
+
+
+		var waitGroup = new Semaphore(pliki.size(), true);
+		var monitor = new TwoWayMonitor();
 		var buffer = new Character[1];
+		var bufferOwnership = new Semaphore(1, true);
 
 		var out = new WriterThread(
 				Files.newBufferedWriter(Path.of(wynik.toURI())),
@@ -105,16 +127,13 @@ public class Main
 								.toString(),
 						buffer,
 						monitor,
-						waitGroup
+						waitGroup,
+						bufferOwnership,
+						BufferingMode.ByChar
 				);
 				readers.add(rt);
 				rt.window.show();
-				rt.window.setX(20 +
-						stage.getWidth() +
-						20 +
-						out.window.getWidth() +
-						20 +
-						(rt.window.getWidth() + 20) * i);
+				rt.window.setX(20 + stage.getWidth() + 20 + out.window.getWidth() + 20 + (rt.window.getWidth() + 20) * i);
 				rt.window.setY(20);
 				rt.window.setAlwaysOnTop(true);
 
@@ -129,10 +148,12 @@ public class Main
 			System.exit(0);
 		});
 
-		l.setOnMouseClicked(e -> {
+		button.setOnMouseClicked(e -> {
+			readers.forEach(r -> r.setBufferingMode(comboBox.getValue()));
 			readers.forEach(Thread::start);
 			out.start();
-			l.setOnMouseClicked(Event::consume);
+			button.setOnMouseClicked(Event::consume);
+			button.setDisable(true);
 		});
 
 		System.out.println(this.getParameters()
