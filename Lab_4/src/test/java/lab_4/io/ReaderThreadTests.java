@@ -2,7 +2,7 @@ package lab_4.io;
 
 import lab_4.Main;
 import lab_4.concurrent.Semaphore;
-import lab_4.concurrent.locks.Monitor;
+import lab_4.concurrent.locks.TwoWayMonitor;
 import lab_4.result.Res;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 class ReaderThreadTests {
 
 	Semaphore sem;
-	Monitor mon;
+	TwoWayMonitor mon;
 	final Character[] buffer = new Character[1];
 	BufferedReader test1_txt;
 	BufferedReader test2_txt;
@@ -30,9 +30,11 @@ class ReaderThreadTests {
 
 	@Test
 	void Test_ReaderThreads_ballet() {
+		ReaderThread.noGui = true;
+
 		try {
 			sem = new Semaphore(3);
-			mon = new Monitor();
+			mon = new TwoWayMonitor();
 
 			// Assign readers
 			Assertions.assertDoesNotThrow(() -> {
@@ -78,7 +80,7 @@ class ReaderThreadTests {
 					mon.lock();
 					try {
 						while (this.buffer[0] == null) {
-							if (!mon.await(
+							if (!mon.write.await(
 									Main.ASSUME_THREAD_DEAD__MS,
 									TimeUnit.MILLISECONDS
 							) && sem.tryAcquire(
@@ -92,7 +94,7 @@ class ReaderThreadTests {
 //						System.out.println("<- " + this.buffer[0]);
 						output.addLast(this.buffer[0]);
 						this.buffer[0] = null;
-						mon.signal();
+						mon.read.signal();
 					} finally {
 						mon.unlock();
 					}

@@ -1,4 +1,4 @@
-module edu.jeznach.demo {
+module lab_4 {
     requires javafx.controls;
     requires javafx.fxml;
     requires org.jetbrains.annotations;
