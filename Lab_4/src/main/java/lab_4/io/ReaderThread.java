@@ -7,16 +7,25 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import lab_4.Main;
+import lab_4.Config;
 import lab_4.concurrent.Semaphore;
 import lab_4.concurrent.locks.TwoWayMonitor;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 
+/**
+ * A thread, that is responsible for <b>reading from a file</b> into a buffer.
+ * <p>
+ * Additionally, thread can render {@link javafx JavaFX} GUI, if {@link ReaderThread#noGui} is
+ * set to <code>true</code>.
+ */
 public class ReaderThread
 		extends Thread
 {
+	/**
+	 * Flag that indicates, whether class is rendering its own {@link Stage}.
+	 */
 	public static boolean noGui = false;
 
 	private final BufferedReader file;
@@ -25,11 +34,31 @@ public class ReaderThread
 	private final Semaphore waitGroup;
 	private final Semaphore bufferOwnership;
 	private BufferingMode bufferingMode;
+	/**
+	 * A {@link Stage} that displays state of reading.
+	 * <p>
+	 * It should be true, that:
+	 * <pre><code>
+	 *     (this.window != null) == this.noGui
+	 * </code></pre>
+	 */
 	public final Stage window;
 	private final StringProperty windowText;
 	private boolean hasPermit = false;
 
 
+	/**
+	 * Creates new <code>ReaderThread</code>, with implied buffering mode of
+	 * {@link BufferingMode#ByChar}.
+	 * @param file A {@link BufferedReader} that will provide text to read.
+	 * @param name A name of file, used for {@link ReaderThread#window}s title.
+	 * @param buffer A one-element array of characters, shared between reader and writer threads.
+	 * @param monitor A monitor, used to protect buffer.
+	 * @param waitGroup A semaphore, used by readers to signal end-of-file - number of permits in
+	 *                    semaphore should be equal to number of launched threads.
+	 * @throws InterruptedException if <code>waitGroup</code> is provided with remaining permits,
+	 * then probably never.
+	 */
 	public ReaderThread(
 			BufferedReader file,
 			String name,
@@ -41,6 +70,21 @@ public class ReaderThread
 		this(file, name, buffer, monitor, waitGroup, null, BufferingMode.ByChar);
 	}
 
+	/**
+	 * Creates new <code>ReaderThread</code>.
+	 * @param file A {@link BufferedReader} that will provide text to read.
+	 * @param name A name of file, used for {@link ReaderThread#window}s title.
+	 * @param buffer A one-element array of characters, shared between reader and writer threads.
+	 * @param monitor A monitor, used to protect buffer.
+	 * @param waitGroup A semaphore, used by readers to signal end-of-file - number of permits in
+	 *                    semaphore should be equal to number of launched threads.
+	 * @param bufferOwnership A semaphore, that is used to hold ownership of buffer - if
+	 *                           bufferingMode is not {@link BufferingMode#ByChar}, then it must
+	 *                           be provided, with only one permit.
+	 * @param bufferingMode A mode of reading characters into buffer.
+	 * @throws InterruptedException if <code>waitGroup</code> is provided with remaining permits,
+	 * then probably never.
+	 */
 	public ReaderThread(
 			BufferedReader file,
 			String name,
@@ -101,7 +145,7 @@ public class ReaderThread
 							this.windowText.setValue(this.windowText.getValue() + s);
 						});
 					}
-					sleep(Main.BOUNCE__MS);
+					sleep(Config.Bounce_ms);
 //					System.out.println("-> " + this.buffer[0]);
 					this.monitor.write.signal();
 				} finally {

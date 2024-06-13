@@ -1,5 +1,11 @@
 package lab_4.io;
 
+/**
+ * Specifies mode of buffering.
+ * <p>
+ * Buffer size doesn't change, but how long particular thread locks
+ * said buffer does.
+ */
 public enum BufferingMode {
 	ByChar("Po jednym znaku"),
 	ByWord("Po jednym słowie"),

@@ -1,18 +1,12 @@
 package lab_4;
 
 import javafx.application.Application;
-import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import lab_4.concurrent.Semaphore;
@@ -22,48 +16,15 @@ import lab_4.io.ReaderThread;
 import lab_4.io.WriterThread;
 import lab_4.javafx.utils.FX;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class Main
 		extends Application
 {
-
-	public static final List<URL> pliki;
-	public static final URL wynik;
-
-	static {
-		try {
-			pliki = new ArrayList<>();
-			Arrays.stream(new File("src/main/resources/in").listFiles())
-					.map(File::toURI)
-					.map(uri -> {
-						try {
-							return uri.toURL();
-						} catch (MalformedURLException e) {
-							throw new RuntimeException(e);
-						}
-					})
-					.forEach(pliki::add);
-			wynik = Path.of("src/main/resources/wynik.txt")
-					.toUri()
-					.toURL();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public static final long ASSUME_THREAD_DEAD__MS = 25;
-	public static final long BOUNCE__MS = 10;
-
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -115,14 +76,14 @@ public class Main
 		stage.setHeight(240);
 		stage.setAlwaysOnTop(true);
 
-		var waitGroup = new Semaphore(pliki.size(), true);
+		var waitGroup = new Semaphore(Config.Files.size(), true);
 		var monitor = new TwoWayMonitor();
 		var buffer = new Character[1];
 		var bufferOwnership = new Semaphore(1, true);
 
 		var out = new WriterThread(
-				Files.newBufferedWriter(Path.of(wynik.toURI())),
-				Path.of(wynik.toURI())
+				Files.newBufferedWriter(Path.of(Config.Result.toURI())),
+				Path.of(Config.Result.toURI())
 						.getFileName()
 						.toString(),
 				buffer,
@@ -136,8 +97,8 @@ public class Main
 
 		var readers = new ArrayList<ReaderThread>();
 
-		for (int i = 0; i < pliki.size(); i++) {
-			var f = pliki.get(i);
+		for (int i = 0; i < Config.Files.size(); i++) {
+			var f = Config.Files.get(i);
 			try {
 				var rt = new ReaderThread(
 						Files.newBufferedReader(Path.of(f.toURI())),

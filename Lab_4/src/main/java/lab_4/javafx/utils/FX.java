@@ -8,6 +8,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+/**
+ * Class that provides DSL-ish syntax for creating JavaFX GUI - it allows for inline
+ * configuration of returned nodes.
+ */
 public final class FX {
 
 	// High order not-nodes
@@ -340,19 +344,47 @@ public final class FX {
 		return node;
 	}
 
+	/**
+	 * Configures newly created node.
+	 * <p>
+	 * This is a {@linkplain java.util.function functional interface} whose functional method is
+	 * {@link NodeInitializer#init(N)}
+	 * @param <N> Type of node, or other element
+	 */
 	@FunctionalInterface
 	public interface NodeInitializer<N> {
 
+		/**
+		 * Configures newly created node.
+		 * @param node A node to configure.
+		 */
 		void init(N node);
 
+		/**
+		 * Indicates, that no additional configuration is needed.
+		 */
 		static <N> void noInit(N n) {}
 	}
-
+	/**
+	 * Configures newly created pane.
+	 * <p>
+	 * This is a {@linkplain java.util.function functional interface} whose functional method is
+	 * {@link LayoutPaneInitializer#init(P, ObservableList)}
+	 * @param <P> Type of pane.
+	 */
 	@FunctionalInterface
 	public interface LayoutPaneInitializer<P extends Pane> {
 
+		/**
+		 * Configures newly created pane.
+		 * @param node A pane to configure.
+		 * @param children By contract, it should be a reference to <code>node.getChildren()</code>
+		 */
 		void init(P node, ObservableList<Node> children);
 
+		/**
+		 * Indicates, that no additional configuration is needed.
+		 */
 		static <P extends Pane> void noInit(P p, ObservableList<Node> c) {}
 	}
 }

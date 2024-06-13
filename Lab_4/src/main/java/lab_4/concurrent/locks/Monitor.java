@@ -7,6 +7,17 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * This class can be used as a drop-in replacement for built-in monitors (that are used with
+ * <code>synchronized</code>, {@link Object#wait}, {@link Object#notify},
+ * {@link Object#notifyAll()}, as it implements both {@link ReentrantLock} and {@link Condition}.
+ * <p>
+ * Underneath, a fair <code>ReentrantLock</code> is used, as well as single instance of
+ * <code>Condition</code> created with {@link ReentrantLock#newCondition()}.
+ *
+ * @see ReentrantLock
+ * @see Condition
+ */
 public class Monitor
 		extends ReentrantLock
 		implements Condition
@@ -15,6 +26,9 @@ public class Monitor
 	private final ReentrantLock lock;
 	private final Condition cond;
 
+	/**
+	 * Creates new <code>Monitor</code> instance.
+	 */
 	public Monitor() {
 		this.lock = new ReentrantLock(true);
 		this.cond = this.lock.newCondition();
@@ -82,7 +96,7 @@ public class Monitor
 
 	@Override
 	public String toString() {
-		return lock.toString();
+		return lock.toString() + "\n" + cond.toString();
 	}
 
 	@Override

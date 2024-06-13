@@ -1,6 +1,6 @@
 package lab_4.io;
 
-import lab_4.Main;
+import lab_4.Config;
 import lab_4.concurrent.Semaphore;
 import lab_4.concurrent.locks.TwoWayMonitor;
 import lab_4.result.Res;
@@ -81,11 +81,11 @@ class ReaderThreadTests {
 					try {
 						while (this.buffer[0] == null) {
 							if (!mon.write.await(
-									Main.ASSUME_THREAD_DEAD__MS,
+									Config.AssumeThreadDead_ms,
 									TimeUnit.MILLISECONDS
 							) && sem.tryAcquire(
 									3,
-									Main.ASSUME_THREAD_DEAD__MS,
+									Config.AssumeThreadDead_ms,
 									TimeUnit.MILLISECONDS
 							)) {
 								break outer;

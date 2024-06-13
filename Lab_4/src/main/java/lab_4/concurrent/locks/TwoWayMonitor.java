@@ -4,13 +4,34 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Special type of Monitor, that already has two {@link Condition}s associated with it - it can
+ * be used for example to protect two-way Objects, like buffers or queues.
+ * <p>
+ * Underneath, a fair {@link ReentrantLock} is used, as well as two instances of
+ * <code>Condition</code> created with {@link ReentrantLock#newCondition()}.
+ *
+ * @see Monitor
+ * @see ReentrantLock
+ * @see Condition
+ */
 public class TwoWayMonitor extends ReentrantLock {
 
+	/**
+	 * A read-end {@link Condition} suspension.
+	 */
 	public final Condition read;
+
+	/**
+	 * A write-end {@link Condition} suspension.
+	 */
 	public final Condition write;
 
 	private final ReentrantLock lock;
 
+	/**
+	 * Creates new <code>TwoWayMonitor</code> instance.
+	 */
 	public TwoWayMonitor() {
 		this.lock = new ReentrantLock(true);
 		this.read = this.lock.newCondition();

@@ -7,7 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.TextArea;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import lab_4.Main;
+import lab_4.Config;
 import lab_4.concurrent.Semaphore;
 import lab_4.concurrent.locks.TwoWayMonitor;
 
@@ -15,19 +15,46 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * A thread, that is responsible for <b>writing to a file</b> from a buffer.
+ * <p>
+ * Additionally, thread can render {@link javafx JavaFX} GUI, if {@link WriterThread#noGui} is
+ * set to <code>true</code>.
+ */
 public class WriterThread
 		extends Thread
 {
+	/**
+	 * Flag that indicates, whether class is rendering its own {@link Stage}.
+	 */
 	public static boolean noGui = false;
 
 	private final BufferedWriter file;
 	private final Character[] buffer;
 	private final TwoWayMonitor monitor;
 	private final Semaphore waitGroup;
+	/**
+	 * A {@link Stage} that displays state of reading.
+	 * <p>
+	 * It should be true, that:
+	 * <pre><code>
+	 *     (this.window != null) == this.noGui
+	 * </code></pre>
+	 */
 	public final Stage window;
 	private final StringProperty windowText;
 
-
+	/**
+	 * Creates new <code>WriterThread</code>.
+	 * @param file A {@link BufferedWriter} that provides output to write to.
+	 * @param name A name of file, used for {@link WriterThread#window}s title.
+	 * @param buffer A one-element array of characters, shared between reader and writer threads.
+	 * @param monitor A monitor, used to protect buffer.
+	 * @param waitGroup A semaphore, used by readers to signal end-of-file - number of permits in
+	 *                    semaphore should be equal to number of launched threads; by design,
+	 *                    before launch of writer, permits should be drained by readers (by
+	 *                    launching them before writer).
+	 */
 	public WriterThread(
 			BufferedWriter file,
 			String name,
@@ -67,12 +94,12 @@ public class WriterThread
 				try {
 					while (this.buffer[0] == null) {
 						if (!monitor.write.await(
-								Main.ASSUME_THREAD_DEAD__MS,
+								Config.AssumeThreadDead_ms,
 								TimeUnit.MILLISECONDS
 						) &&
 								waitGroup.tryAcquire(
 										waitGroup.permitStorage(),
-										Main.ASSUME_THREAD_DEAD__MS,
+										Config.AssumeThreadDead_ms,
 										TimeUnit.MILLISECONDS
 								)) {
 							break outer;
