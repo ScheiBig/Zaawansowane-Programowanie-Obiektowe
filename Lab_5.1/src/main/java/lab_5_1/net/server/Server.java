@@ -1,7 +1,9 @@
 package lab_5_1.net.server;
 
-import lab_5_1.concurrent.locks.Monitor;
 import lab_5_1.net.Msg;
+import utilx.concurrent.locks.Monitor;
+import utilx.net.IP4Address;
+import utilx.net.SocketIO;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -30,13 +32,24 @@ public class Server
 			System.out.println("[Server]: Accepting client connections @ localhost:" + this.port);
 			while (true) {
 				var socket = socketServer.accept();
-				System.out.println("[Server]: Accepted client from @ " + socket.getInetAddress()
-						.getHostAddress() + ":" + socket.getPort());
+				System.out.println("[Server]: Accepted client from @ " +
+						socket.getInetAddress()
+								.getHostAddress() +
+						":" +
+						socket.getPort());
 				var queueEmptyStatus = new Monitor();
-				var rt = new ReadThread(socket, this.userMessageQueues, queueEmptyStatus);
+				var socketIO = new SocketIO(socket).objectStreams();
+				var socketAddress = new IP4Address(socket);
+				var rt = new ReadThread(
+						socketIO,
+						socketAddress,
+						this.userMessageQueues,
+						queueEmptyStatus
+				);
 				rt.start();
 				new WriteThread(
-						socket,
+						socketIO,
+						socketAddress,
 						this.userMessageQueues,
 						queueEmptyStatus,
 						this.usersLock,

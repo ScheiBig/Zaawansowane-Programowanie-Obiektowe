@@ -2,9 +2,11 @@ package lab_5_1.net.server;
 
 
 import lab_5_1.Config;
-import lab_5_1.concurrent.locks.Monitor;
+import utilx.concurrent.locks.Monitor;
 import lab_5_1.net.Msg;
 import org.junit.jupiter.api.*;
+import utilx.net.IP4Address;
+import utilx.net.SocketIO;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -59,7 +61,8 @@ class Bundle_1__WriteThreadTests {
 		userMessageQueues.put(TestUserName, new LinkedBlockingDeque<>());
 		usersLock = new Monitor();
 		serverWriter = new WriteThread(
-				serverSocket,
+				new SocketIO(serverSocket).objectStreams(),
+				new IP4Address(serverSocket),
 				userMessageQueues,
 				userQueueStatuses.get(ClientName),
 				usersLock,
@@ -87,13 +90,13 @@ class Bundle_1__WriteThreadTests {
 
 		client_push.writeObject(new Msg.SendTo(TestUserName, "Hello"));
 		var obj = client_pull.readObject();
-		Assertions.assertInstanceOf(Msg.NotRegistered.getClass(), obj);
+		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
 		Assertions.assertEquals(Msg.NotRegistered, msg);
 
 		client_push.writeObject(new Msg.All("Hello"));
 		obj = client_pull.readObject();
-		Assertions.assertInstanceOf(Msg.NotRegistered.getClass(), obj);
+		Assertions.assertInstanceOf(String.class, obj);
 		msg = (String) obj;
 		Assertions.assertEquals(Msg.NotRegistered, msg);
 	}

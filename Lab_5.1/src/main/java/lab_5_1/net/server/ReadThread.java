@@ -1,12 +1,13 @@
 package lab_5_1.net.server;
 
-import lab_5_1.concurrent.locks.Monitor;
+import utilx.concurrent.locks.Monitor;
 import lab_5_1.net.Msg;
 import org.jetbrains.annotations.Nullable;
+import utilx.net.IP4Address;
+import utilx.net.SocketIO;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 
@@ -16,27 +17,32 @@ public class ReadThread
 
 	private @Nullable String username;
 	private final Monitor usernameSignal;
-	private final Socket socket;
+	private final SocketIO.ObjectStreamIO socketIO;
+	private final IP4Address socketAddress;
 	private final Map<String, BlockingDeque<Msg>> userMessageQueues;
 	private final Monitor queueEmptyStatus;
 
 	public ReadThread(
-			Socket socket,
+			SocketIO.ObjectStreamIO socketIO,
+			IP4Address socketAddress,
 			Map<String, BlockingDeque<Msg>> userMessageQueues,
 			Monitor queueEmptyStatus
 	) {
 		this.username = null;
-		this.socket = socket;
+		this.socketIO = socketIO;
+		this.socketAddress = socketAddress;
 		this.userMessageQueues = userMessageQueues;
 		this.queueEmptyStatus = queueEmptyStatus;
-		usernameSignal = new Monitor();
+		this.usernameSignal = new Monitor();
+
+		this.setName(this.getLogHead());
 	}
 
 
 	@Override
 	public void run() {
 		try (
-				var push = new ObjectOutputStream(socket.getOutputStream());
+				var push = this.socketIO.out();
 		) {
 			this.usernameSignal.lock();
 			try {
@@ -83,8 +89,8 @@ public class ReadThread
 	}
 
 	private String getLogHead() {
-		return "[Server::Read # " + this.username + " @ " + this.socket.getInetAddress()
-				.getHostAddress() + ":" + this.socket.getPort() + "]";
+		return "[Server::Read # " + this.username + " @ " + this.socketAddress.address()
+				.getHostAddress() + ":" + this.socketAddress.port() + "]";
 
 	}
 }

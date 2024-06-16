@@ -1,13 +1,12 @@
 package lab_5_1.net.server;
 
-import lab_5_1.concurrent.locks.Monitor;
 import lab_5_1.net.Msg;
 import org.jetbrains.annotations.Nullable;
+import utilx.concurrent.locks.Monitor;
+import utilx.net.IP4Address;
+import utilx.net.SocketIO;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
@@ -19,34 +18,37 @@ public class WriteThread
 {
 
 	private @Nullable String username;
-	private final Socket socket;
+	private final SocketIO.ObjectStreamIO socketIO;
+	private final IP4Address socketAddress;
 	private final Map<String, BlockingDeque<Msg>> userMessageQueues;
 	private final Monitor usersLock;
 	private final Monitor queueEmptyStatus;
 	private final Consumer<String> usernameInitializer;
 
 	public WriteThread(
-			Socket socket,
+			SocketIO.ObjectStreamIO socketIO,
+			IP4Address socketAddress,
 			Map<String, BlockingDeque<Msg>> userMessageQueues,
 			Monitor queueEmptyStatus,
 			Monitor usersLock,
 			Consumer<String> usernameInitializer
 	) {
 		this.username = null;
-		this.socket = socket;
+		this.socketIO = socketIO;
+		this.socketAddress = socketAddress;
 		this.userMessageQueues = userMessageQueues;
 		this.queueEmptyStatus = queueEmptyStatus;
 		this.usersLock = usersLock;
 		this.usernameInitializer = usernameInitializer;
 
-		this.setName(getLogHead());
+		this.setName(this.getLogHead());
 	}
 
 	@Override
 	public void run() {
 		try (
-				var push = new ObjectOutputStream(socket.getOutputStream());
-				var pull = new ObjectInputStream(socket.getInputStream());
+				var push = socketIO.out();
+				var pull = socketIO.in();
 		) {
 			/*
 			 * Main processing loop of client communicates
@@ -229,8 +231,8 @@ public class WriteThread
 	}
 
 	private String getLogHead() {
-		return "[Server::Write # " + this.username + " @ " + this.socket.getInetAddress()
-				.getHostAddress() + ":" + this.socket.getPort() + "]";
+		return "[Server::Write # " + this.username + " @ " + this.socketAddress.address()
+				.getHostAddress() + ":" + this.socketAddress.port() + "]";
 
 	}
 }
