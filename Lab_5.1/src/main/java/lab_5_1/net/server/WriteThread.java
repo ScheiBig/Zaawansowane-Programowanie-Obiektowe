@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.function.Consumer;
 
 public class WriteThread
 		extends Thread
@@ -22,18 +23,21 @@ public class WriteThread
 	private final Map<String, BlockingDeque<Msg>> userMessageQueues;
 	private final Monitor usersLock;
 	private final Monitor queueEmptyStatus;
+	private final Consumer<String> usernameInitializer;
 
 	public WriteThread(
 			Socket socket,
 			Map<String, BlockingDeque<Msg>> userMessageQueues,
 			Monitor queueEmptyStatus,
-			Monitor usersLock
+			Monitor usersLock,
+			Consumer<String> usernameInitializer
 	) {
 		this.username = null;
 		this.socket = socket;
 		this.userMessageQueues = userMessageQueues;
 		this.queueEmptyStatus = queueEmptyStatus;
 		this.usersLock = usersLock;
+		this.usernameInitializer = usernameInitializer;
 
 		this.setName(getLogHead());
 	}
@@ -63,37 +67,34 @@ public class WriteThread
 						System.out.println(this.getLogHead() + " " + msg);
 						if (this.username != null) {
 							push.writeObject(Msg.AlreadyRegistered);
-							System.out.println(this.getLogHead() +
-									" already registered as: " +
-									this.username);
+							System.out.println(
+									this.getLogHead() + " already registered as: " + this.username);
 							break;
 						}
-						if (Msg.Commands.contains(msg.username) ||
-								msg.username.isBlank() ||
+						if (Msg.Commands.contains(msg.username) || msg.username.isBlank() ||
 								!msg.username.replaceAll("[a-zA-Z0-9]", "")
 										.isEmpty()) {
 							push.writeObject(Msg.UsernameInvalid);
-							System.out.println(this.getLogHead() +
-									" invalid username: " +
-									msg.username);
+							System.out.println(
+									this.getLogHead() + " invalid username: " + msg.username);
 							break;
 						}
 						this.usersLock.lock();
 						try {
 							if (this.userMessageQueues.containsKey(msg.username)) {
 								push.writeObject(Msg.UsernameTaken);
-								System.out.println(this.getLogHead() +
-										" already taken username: " +
-										msg.username);
+								System.out.println(
+										this.getLogHead() + " already taken username:" + " " +
+												msg.username);
 								break;
 							}
 							var queue = new LinkedBlockingDeque<Msg>(32);
 							this.userMessageQueues.put(msg.username, queue);
 							this.username = msg.username;
 							push.writeObject(Msg.Success);
-							System.out.println(this.getLogHead() +
-									" successful register: " +
-									this.username);
+							this.usernameInitializer.accept(this.username);
+							System.out.println(
+									this.getLogHead() + " successful register: " + this.username);
 						} finally {
 							this.usersLock.unlock();
 						}
@@ -132,7 +133,7 @@ public class WriteThread
 							}
 							for (var q : others) {
 								if (!(q.peekLast() instanceof Msg.Exit)) {
-									q.put(new Msg.SendTo(this.username, msg.message));
+									q.putLast(new Msg.SendTo(this.username, msg.message));
 								}
 							}
 							push.writeObject(Msg.Success);
@@ -157,12 +158,11 @@ public class WriteThread
 							var user = this.userMessageQueues.get(msg.username);
 							if (user == null || user.peekLast() instanceof Msg.Exit) {
 								push.writeObject(Msg.NoSuchUser);
-								System.out.println(this.getLogHead() +
-										" no such user: " +
-										msg.username);
+								System.out.println(
+										this.getLogHead() + " no such user: " + msg.username);
 								break;
 							}
-							user.put(new Msg.SendTo(this.username, msg.message));
+							user.putLast(new Msg.SendTo(this.username, msg.message));
 							push.writeObject(Msg.Success);
 							System.out.println(this.getLogHead() + " successful send");
 						} finally {
@@ -184,34 +184,35 @@ public class WriteThread
 						System.out.println(this.getLogHead() + " " + msg);
 						if (this.username == null) {
 							push.writeObject(false);
-							System.out.println(this.getLogHead() +
-									" cleanup unnecessary # " +
-									msg.username);
+							System.out.println(
+									this.getLogHead() + " cleanup unnecessary # " + msg.username);
 						} else {
-							System.out.println(this.getLogHead() +
-									" cleanup necessary # " +
-									msg.username);
+							System.out.println(
+									this.getLogHead() + " cleanup necessary # " + msg.username);
 							this.queueEmptyStatus.lock();
 							try {
 								if (!this.userMessageQueues.get(this.username)
 										.isEmpty()) {
-									System.out.println(this.getLogHead() +
-											" cleanup awaiting empty message queue # " +
-											msg.username);
+									System.out.println(this.getLogHead() + " cleanup awaiting " +
+											"empty message queue # " + msg.username);
 									this.userMessageQueues.get(this.username)
-											.put(msg);
+											.putLast(msg);
 									this.queueEmptyStatus.await();
 								}
-								this.userMessageQueues.remove(this.username);
+								this.usersLock.lock();
+								try {
+									this.userMessageQueues.remove(this.username);
+								} finally {
+									this.usersLock.unlock();
+								}
 							} catch (InterruptedException e) {
 								throw new RuntimeException(e);
 							} finally {
 								this.queueEmptyStatus.unlock();
 							}
 							push.writeObject(true);
-							System.out.println(this.getLogHead() +
-									" cleanup successful # " +
-									msg.username);
+							System.out.println(
+									this.getLogHead() + " cleanup successful # " + msg.username);
 						}
 						break loop;
 					}
@@ -228,14 +229,8 @@ public class WriteThread
 	}
 
 	private String getLogHead() {
-		return "[Server::Write # " +
-				this.username +
-				" @ " +
-				this.socket.getInetAddress()
-						.getHostAddress() +
-				":" +
-				this.socket.getPort() +
-				"]";
+		return "[Server::Write # " + this.username + " @ " + this.socket.getInetAddress()
+				.getHostAddress() + ":" + this.socket.getPort() + "]";
 
 	}
 }
