@@ -43,7 +43,7 @@ A jeżeli byśmy chcieli, aby wysłany przez klienta komunikat dotarł do pozost
 Sprawa nie jest taka prosta, ponieważ każdy z klientów może wysłać komunikat w dowolnym momencie.
 Pozostali muszą nasłuchiwać komunikatów.
 
-Rozwiązaniem jest zastosowanie dwóch `socket`ów:
+Rozwiązaniem jest zastosowanie dwóch ~~`socket`ów~~ wątków:
 * od klienta do serwera — dla wysyłania,
 * od serwera do klienta — dla odbierania.
 
