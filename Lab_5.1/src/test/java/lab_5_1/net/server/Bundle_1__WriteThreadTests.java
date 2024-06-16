@@ -19,7 +19,7 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class WriteThreadTests {
+class Bundle_1__WriteThreadTests {
 
 	private Map<String, BlockingDeque<Msg>> userMessageQueues;
 	private Monitor usersLock;
@@ -62,7 +62,8 @@ class WriteThreadTests {
 				serverSocket,
 				userMessageQueues,
 				userQueueStatuses.get(ClientName),
-				usersLock
+				usersLock,
+				(s) -> {System.out.println("[Read Thread Mockup] Initialized username " + s);}
 		);
 		serverWriter.start();
 		serverWriter.setUncaughtExceptionHandler((t, e) -> {});
