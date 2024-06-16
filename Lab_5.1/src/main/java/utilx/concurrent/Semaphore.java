@@ -1,4 +1,4 @@
-package lab_5_1.concurrent;
+package utilx.concurrent;
 
 /**
  * Extended {@link java.util.concurrent.Semaphore Semaphore}, that remembers initial permit count.

@@ -1,4 +1,4 @@
-package lab_5_1.result;
+package utilx.result;
 
 /**
  * Represents a supplier of results, that can error.

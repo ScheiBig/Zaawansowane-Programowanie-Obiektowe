@@ -1,4 +1,4 @@
-package lab_5_1.concurrent.locks;
+package utilx.concurrent.locks;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;

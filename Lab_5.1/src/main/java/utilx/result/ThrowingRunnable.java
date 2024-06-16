@@ -1,4 +1,4 @@
-package lab_5_1.result;
+package utilx.result;
 
 /**
  * Represents an operation that does not return a result, that can error.

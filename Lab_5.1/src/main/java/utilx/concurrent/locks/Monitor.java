@@ -1,4 +1,4 @@
-package lab_5_1.concurrent.locks;
+package utilx.concurrent.locks;
 
 import org.jetbrains.annotations.NotNull;
 
