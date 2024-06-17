@@ -40,9 +40,11 @@ public class Server_ReadThread
 
 	@Override
 	public void run() {
-		try (
-				var push = this.socketIO.out();
-		) {
+		// Server_WriteThread is responsible for cleanup
+		//noinspection resource
+		var push = this.socketIO.out();
+
+		try {
 			this.usernameSignal.lock();
 			try {
 				if (this.username == null) {
@@ -53,6 +55,7 @@ public class Server_ReadThread
 			} finally {
 				this.usernameSignal.unlock();
 			}
+			this.setName(this.getLogHead());
 			var queue = userMessageQueues.get(this.username);
 			while (true) {
 				var msg = queue.takeFirst();

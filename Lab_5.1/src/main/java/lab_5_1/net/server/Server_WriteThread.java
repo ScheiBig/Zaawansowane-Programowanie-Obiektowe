@@ -102,6 +102,7 @@ public class Server_WriteThread
 							System.out.println(this.getLogHead() +
 									" successful register: " +
 									this.username);
+							this.setName(this.getLogHead());
 						} finally {
 							this.usersLock.unlock();
 						}
@@ -210,6 +211,12 @@ public class Server_WriteThread
 									this.userMessageQueues.get(this.username)
 											.putLast(msg);
 									this.queueEmptyStatus.await();
+								} else {
+									System.out.println(this.getLogHead() +
+											" message queue empty, signaling exit # " +
+											msg.username);
+									this.userMessageQueues.get(this.username)
+											.putLast(msg);
 								}
 								this.usersLock.lock();
 								try {

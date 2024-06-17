@@ -40,7 +40,7 @@ public class Bundle_2__FullServerTests {
 	@Order(1)
 	@Test
 	void Test_sending_messages()
-	throws IOException, ClassNotFoundException {
+	throws IOException, ClassNotFoundException, InterruptedException {
 
 		/*
 		 * Register Test
@@ -81,7 +81,7 @@ public class Bundle_2__FullServerTests {
 		obj = test_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		msg = (String) obj;
-		Assertions.assertEquals(Msg.Success, msg);
+		Assertions.assertEquals(Msg.All.Cmd + " # " + Msg.Success, msg);
 		// User should receive message
 		obj = client_pull.readObject();
 		Assertions.assertInstanceOf(Msg.SendTo.class, obj);
@@ -89,5 +89,39 @@ public class Bundle_2__FullServerTests {
 		Assertions.assertEquals(new Msg.SendTo(TestUserName, "Hello Every-nyan"), msgObj);
 		// Test should receive nothing
 		Assertions.assertEquals(0, test_pull.available());
+
+		/*
+		 * Log out
+		 */
+		// User threads should still be running
+		var threadSet = Thread.getAllStackTraces()
+				.keySet()
+				.stream()
+				.filter(t -> t.getName()
+						.startsWith("[Server::"))
+				.filter(t -> t.getName()
+						.contains(ClientUserName))
+				.toList();
+		Assertions.assertEquals(2, threadSet.size());
+
+		client_push.writeObject(new Msg.Exit(ClientUserName));
+		obj = client_pull.readObject();
+		Assertions.assertInstanceOf(Boolean.class, obj);
+		var msgBool = (Boolean) obj;
+		Assertions.assertEquals(true, msgBool);
+
+		// Allow threads to finish
+		Thread.sleep(250);
+
+		// Check if threads turned off
+		threadSet = Thread.getAllStackTraces()
+				.keySet()
+				.stream()
+				.filter(t -> t.getName()
+						.startsWith("[Server::"))
+				.filter(t -> t.getName()
+						.contains(ClientUserName))
+				.toList();
+		Assertions.assertEquals(0, threadSet.size());
 	}
 }

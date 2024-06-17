@@ -222,12 +222,22 @@ class Bundle_1__Server__WriteThreadTests {
 	throws IOException, ClassNotFoundException, InterruptedException {
 		register();
 
+		var lock = userQueueStatuses.get(ClientName);
+		var queue = userMessageQueues.get(ClientName);
+
 		client_push.writeObject(new Msg.Exit(ClientName));
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(Boolean.class, obj);
 		var msg = (Boolean) obj;
 		Assertions.assertEquals(true, msg);
 		Assertions.assertFalse(userMessageQueues.containsKey(ClientName));
+		Thread.sleep(50); // Wait until serverWriter has chance to reada
+		lock.lock();
+		try {
+			Assertions.assertIterableEquals(List.of(new Msg.Exit(ClientName)), queue);
+		} finally {
+			lock.unlock();
+		}
 	}
 
 
