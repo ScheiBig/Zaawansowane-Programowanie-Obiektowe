@@ -15,21 +15,28 @@ public class Server
 		extends Thread
 {
 
+	private final String host;
 	private final int port;
 	private final Map<String, BlockingDeque<Msg>> userMessageQueues;
 	private final Monitor usersLock;
 
-	public Server(int port)
-	throws IOException {
-		userMessageQueues = new HashMap<>();
+	public Server(
+			String host,
+			int port
+	) {
+		this.host = host;
 		this.port = port;
-		usersLock = new Monitor();
+		this.userMessageQueues = new HashMap<>();
+		this.usersLock = new Monitor();
 	}
 
 	@Override
 	public void run() {
 		try (var socketServer = new ServerSocket(this.port)) {
-			System.out.println("[Server]: Accepting client connections @ localhost:" + this.port);
+			System.out.println("[Server]: Accepting client connections @ " +
+					this.host +
+					":" +
+					this.port);
 			while (true) {
 				var socket = socketServer.accept();
 				System.out.println("[Server]: Accepted client from @ " +

@@ -7,11 +7,7 @@ import java.io.IOException;
 public class MainServer {
 	public static void mainServer() {
 		System.out.println("Launching server...");
-		try {
-			new Server(Config.Port).start();
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		new Server(Config.Host, Config.Port).start();
 		System.out.println("Press [Ctrl] + [C] to kill server");
 		/*
 		 * getch() loop instead of Server#join - so OS does not think, app is unresponsive

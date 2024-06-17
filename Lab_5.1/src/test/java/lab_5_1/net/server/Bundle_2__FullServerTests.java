@@ -26,7 +26,7 @@ public class Bundle_2__FullServerTests {
 	@BeforeEach
 	void setUp()
 	throws IOException {
-		serverThread = new Server(Config.Port);
+		serverThread = new Server(Config.Host, Config.Port);
 		serverThread.start();
 
 		clientSocket = new Socket("localhost", Config.Port);
