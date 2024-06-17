@@ -49,7 +49,7 @@ public class Bundle_2__FullServerTests {
 		var obj = test_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.Success, msg);
+		Assertions.assertEquals(Msg.Register.Cmd + " # " + Msg.Success, msg);
 
 		/*
 		 * Register User
@@ -58,7 +58,7 @@ public class Bundle_2__FullServerTests {
 		obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		msg = (String) obj;
-		Assertions.assertEquals(Msg.Success, msg);
+		Assertions.assertEquals(Msg.Register.Cmd + " # " + Msg.Success, msg);
 
 		/*
 		 * Send message from User to Test
@@ -67,7 +67,7 @@ public class Bundle_2__FullServerTests {
 		obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		msg = (String) obj;
-		Assertions.assertEquals(Msg.Success, msg);
+		Assertions.assertEquals(Msg.SendTo.Cmd + " # " + Msg.Success, msg);
 		// Test should receive message
 		obj = test_pull.readObject();
 		Assertions.assertInstanceOf(Msg.SendTo.class, obj);

@@ -40,14 +40,14 @@ public class Server
 				var queueEmptyStatus = new Monitor();
 				var socketIO = new SocketIO(socket).objectStreams();
 				var socketAddress = new IP4Address(socket);
-				var rt = new ReadThread(
+				var rt = new Server_ReadThread(
 						socketIO,
 						socketAddress,
 						this.userMessageQueues,
 						queueEmptyStatus
 				);
 				rt.start();
-				new WriteThread(
+				new Server_WriteThread(
 						socketIO,
 						socketAddress,
 						this.userMessageQueues,

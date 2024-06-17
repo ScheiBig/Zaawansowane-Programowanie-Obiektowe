@@ -7,11 +7,10 @@ import utilx.net.IP4Address;
 import utilx.net.SocketIO;
 
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Map;
 import java.util.concurrent.BlockingDeque;
 
-public class ReadThread
+public class Server_ReadThread
 		extends Thread
 {
 
@@ -22,7 +21,7 @@ public class ReadThread
 	private final Map<String, BlockingDeque<Msg>> userMessageQueues;
 	private final Monitor queueEmptyStatus;
 
-	public ReadThread(
+	public Server_ReadThread(
 			SocketIO.ObjectStreamIO socketIO,
 			IP4Address socketAddress,
 			Map<String, BlockingDeque<Msg>> userMessageQueues,
@@ -89,8 +88,14 @@ public class ReadThread
 	}
 
 	private String getLogHead() {
-		return "[Server::Read # " + this.username + " @ " + this.socketAddress.address()
-				.getHostAddress() + ":" + this.socketAddress.port() + "]";
+		return "[Server::Read # " +
+				this.username +
+				" @ " +
+				this.socketAddress.address()
+						.getHostAddress() +
+				":" +
+				this.socketAddress.port() +
+				"]";
 
 	}
 }

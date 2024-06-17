@@ -28,14 +28,14 @@ import utilx.net.IP4Address;
 import utilx.net.SocketIO;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class Bundle_1__WriteThreadTests {
+class Bundle_1__Server__WriteThreadTests {
 
 	private Map<String, BlockingDeque<Msg>> userMessageQueues;
 	private Monitor usersLock;
 	private Map<String, Monitor> userQueueStatuses;
 	private Socket clientSocket;
 	private Socket serverSocket;
-	private WriteThread serverWriter;
+	private Server_WriteThread serverWriter;
 
 	private static final String ClientName = "User";
 	private static final String TestUserName = "Test";
@@ -67,7 +67,7 @@ class Bundle_1__WriteThreadTests {
 		userQueueStatuses.put(TestUserName, new Monitor());
 		userMessageQueues.put(TestUserName, new LinkedBlockingDeque<>());
 		usersLock = new Monitor();
-		serverWriter = new WriteThread(
+		serverWriter = new Server_WriteThread(
 				new SocketIO(serverSocket).objectStreams(),
 				new IP4Address(serverSocket),
 				userMessageQueues,
@@ -99,13 +99,13 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.NotRegistered, msg);
+		Assertions.assertEquals(Msg.SendTo.Cmd + " # " + Msg.NotRegistered, msg);
 
 		client_push.writeObject(new Msg.All("Hello"));
 		obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		msg = (String) obj;
-		Assertions.assertEquals(Msg.NotRegistered, msg);
+		Assertions.assertEquals(Msg.All.Cmd + " # " + Msg.NotRegistered, msg);
 	}
 
 	@Order(2)
@@ -144,7 +144,7 @@ class Bundle_1__WriteThreadTests {
 			var obj = client_pull.readObject();
 			Assertions.assertInstanceOf(String.class, obj);
 			var msg = (String) obj;
-			Assertions.assertEquals(Msg.UsernameInvalid, msg);
+			Assertions.assertEquals(Msg.Register.Cmd + " # " + Msg.UsernameInvalid, msg);
 
 		}
 	}
@@ -165,7 +165,7 @@ class Bundle_1__WriteThreadTests {
 			var obj = client_pull.readObject();
 			Assertions.assertInstanceOf(String.class, obj);
 			var msg = (String) obj;
-			Assertions.assertEquals(Msg.UsernameInvalid, msg);
+			Assertions.assertEquals(Msg.Register.Cmd + " # " + Msg.UsernameInvalid, msg);
 		}
 	}
 
@@ -178,7 +178,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.UsernameTaken, msg);
+		Assertions.assertEquals(Msg.Register.Cmd + " # " + Msg.UsernameTaken, msg);
 	}
 
 	void register()
@@ -188,7 +188,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.Success, msg);
+		Assertions.assertEquals(Msg.Register.Cmd + " # " + Msg.Success, msg);
 	}
 
 	@Order(7)
@@ -213,7 +213,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.AlreadyRegistered, msg);
+		Assertions.assertEquals(Msg.Register.Cmd + " # " + Msg.AlreadyRegistered, msg);
 	}
 
 	@Order(9)
@@ -284,7 +284,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.NoUsers, msg);
+		Assertions.assertEquals(Msg.All.Cmd + " # " + Msg.NoUsers, msg);
 	}
 
 	@Order(12)
@@ -297,7 +297,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.Success, msg);
+		Assertions.assertEquals(Msg.All.Cmd + " # " + Msg.Success, msg);
 
 		Assertions.assertTrue(userMessageQueues.get(ClientName)
 				.isEmpty());
@@ -318,7 +318,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.NoSuchUser, msg);
+		Assertions.assertEquals(Msg.SendTo.Cmd + " # " + Msg.NoSuchUser, msg);
 	}
 
 	@Order(14)
@@ -332,7 +332,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.Success, msg);
+		Assertions.assertEquals(Msg.SendTo.Cmd + " # " + Msg.Success, msg);
 
 		Assertions.assertIterableEquals(
 				List.of(new Msg.SendTo(ClientName, "Hi")),
@@ -352,7 +352,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.NoSuchUser, msg);
+		Assertions.assertEquals(Msg.SendTo.Cmd + " # " + Msg.NoSuchUser, msg);
 	}
 
 	@Order(16)
@@ -365,7 +365,7 @@ class Bundle_1__WriteThreadTests {
 		var obj = client_pull.readObject();
 		Assertions.assertInstanceOf(String.class, obj);
 		var msg = (String) obj;
-		Assertions.assertEquals(Msg.UnknownCommand, msg);
+		Assertions.assertEquals(" # " + Msg.UnknownCommand, msg);
 
 	}
 }
