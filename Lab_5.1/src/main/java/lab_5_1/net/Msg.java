@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public sealed class Msg
+public sealed abstract class Msg
 		implements Serializable
 		permits Msg.Register,
 		Msg.ListUsers,
@@ -20,8 +20,8 @@ public sealed class Msg
 	public static final String UsernameTaken = "That username is already taken";
 	public static final String UsernameInvalid = "That username is invalid or reserved";
 	public static final String NotRegistered = "Not registered: use `REGISTER {username}` to " +
-		"register" +
-		" " +
+			"register" +
+			" " +
 			"first";
 	public static final String AlreadyRegistered = "Already registered";
 	public static final String NoSuchUser = "User with this name does not exist";
@@ -30,8 +30,7 @@ public sealed class Msg
 	public static final String Success = "Success";
 	public static final String UnknownCommand = "Unknown Command";
 
-	public static final List<String> Commands = Arrays.asList(
-			Register.Cmd,
+	public static final List<String> Commands = Arrays.asList(Register.Cmd,
 			ListUsers.Cmd,
 			All.Cmd,
 			SendTo.Cmd,
@@ -44,6 +43,8 @@ public sealed class Msg
 	private Msg(String cmd) {
 		this.cmd = cmd;
 	}
+
+	public abstract String toString();
 
 	public static final class Register
 			extends Msg
@@ -60,6 +61,20 @@ public sealed class Msg
 		@Override
 		public String toString() {
 			return Register.Cmd + " " + this.username;
+		}
+
+		public static String help() {
+			return """
+					REGISTER <username>
+					--------------------------------------------------------------------------------
+					Registers you with specified username. Username can only contain alphanumeric
+					ASCII characters.
+					
+					Command cannot be used as username - for list of commands type `HELP`.
+					
+					Usernames are session-based - after you  log out, your username becomes free
+					to take again.
+					""";
 		}
 
 		@Override
@@ -92,6 +107,14 @@ public sealed class Msg
 		@Override
 		public String toString() {
 			return ListUsers.Cmd;
+		}
+
+		public static String help() {
+			return """
+					LIST_USERS
+					--------------------------------------------------------------------------------
+					Prints list of usernames of users in chat.
+					""";
 		}
 
 		@Override
@@ -133,6 +156,20 @@ public sealed class Msg
 			return SendTo.Cmd + " " + this.username + " > " + this.message;
 		}
 
+		public static String help() {
+			return """
+					<username> <message>
+					--------------------------------------------------------------------------------
+					Sends direct message to specified user.
+					
+					Any word that is not command will be treated as username and will trigger
+					this command.
+					
+					User must be currently registered in chat - for list of available users to chat
+					with type `LIST_USERS`
+					""";
+		}
+
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) {
@@ -166,6 +203,17 @@ public sealed class Msg
 		@Override
 		public String toString() {
 			return All.Cmd + " > " + this.message;
+		}
+
+		public static String help() {
+			return """
+					ALL <message>
+					--------------------------------------------------------------------------------
+					Sends message to all users in chat.
+					
+					There must be at least one user currently registered in chat - for list of
+					available users to chat with type `LIST_USERS`
+					""";
 		}
 
 		@Override
@@ -202,6 +250,17 @@ public sealed class Msg
 			return Exit.Cmd + " " + this.username;
 		}
 
+		public static String help() {
+			return """
+					EXIT
+					--------------------------------------------------------------------------------
+					Exits from chat in safe manner.
+					
+					Exiting via `EXIT` command ensures, that you receive all pending messages sent
+					to you before quiting.
+					""";
+		}
+
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) {
@@ -227,6 +286,25 @@ public sealed class Msg
 
 		public Help() {
 			super(Help.Cmd);
+		}
+
+		@Override
+		public String toString() {
+			return Help.Cmd;
+		}
+
+		public static String help() {
+			return """
+					HELP <command>
+					--------------------------------------------------------------------------------
+					Prints help for given command. Available commands are:
+					
+					REGISTER <username> - registers you with specified username.
+					LIST_USERS - prints list of usernames of users in chat.
+					<username> <message> - (SEND_TO command) sends direct message to specified user.
+					ALL <message> - Sends message to all users in chat.
+					EXIT - Exits from chat in safe manner.
+					""";
 		}
 
 		@Override
