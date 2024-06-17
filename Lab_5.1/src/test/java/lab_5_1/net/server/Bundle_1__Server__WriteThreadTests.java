@@ -73,7 +73,8 @@ class Bundle_1__Server__WriteThreadTests {
 				userMessageQueues,
 				userQueueStatuses.get(ClientName),
 				usersLock,
-				(s) -> {System.out.println("[Read Thread Mockup] Initialized username " + s);}
+				(s) -> {System.out.println("[Read Thread Mockup] Initialized username " + s);},
+				() -> {System.err.println("[Read Thread Mockup] Interrupted.");}
 		);
 		serverWriter.start();
 		serverWriter.setUncaughtExceptionHandler((t, e) -> {});

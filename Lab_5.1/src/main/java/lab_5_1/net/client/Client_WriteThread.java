@@ -48,7 +48,7 @@ public class Client_WriteThread
 					continue;
 				}
 
-				switch (input[0]) {
+				switch (input[0].toUpperCase()) {
 					case Msg.Register.Cmd -> {
 						if (this.username != null) {
 							this.outLock.lock();
@@ -107,18 +107,30 @@ public class Client_WriteThread
 						this.outLock.lock();
 						try {
 							if (input.length == 1) {
-								System.out.println(Msg.Help.help());
+								System.out.print(Msg.Help.help());
 							} else {
 								switch (input[1]) {
-									case Msg.Register.Cmd ->
-											System.out.println(Msg.Register.help());
-									case Msg.ListUsers.Cmd ->
-											System.out.println(Msg.ListUsers.help());
-									case Msg.All.Cmd -> System.out.println(Msg.All.help());
-									case Msg.SendTo.Cmd -> System.out.println(Msg.SendTo.help());
-									case Msg.Exit.Cmd -> System.out.println(Msg.Exit.help());
-									case Msg.Help.Cmd -> System.out.println(Msg.Help.help());
-									default -> System.err.println(Msg.UnknownCommand);
+									case Msg.Register.Cmd -> {
+										System.out.print(Msg.Register.help());
+									}
+									case Msg.ListUsers.Cmd -> {
+										System.out.print(Msg.ListUsers.help());
+									}
+									case Msg.All.Cmd -> {
+										System.out.print(Msg.All.help());
+									}
+									case Msg.SendTo.Cmd -> {
+										System.out.print(Msg.SendTo.help());
+									}
+									case Msg.Exit.Cmd -> {
+										System.out.print(Msg.Exit.help());
+									}
+									case Msg.Help.Cmd -> {
+										System.out.print(Msg.Help.help());
+									}
+									default -> {
+										System.err.println(Msg.UnknownCommand);
+									}
 								}
 							}
 						} finally {

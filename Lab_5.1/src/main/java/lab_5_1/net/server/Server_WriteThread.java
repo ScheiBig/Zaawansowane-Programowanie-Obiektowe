@@ -7,6 +7,7 @@ import utilx.net.IP4Address;
 import utilx.net.SocketIO;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingDeque;
@@ -24,6 +25,7 @@ public class Server_WriteThread
 	private final Monitor usersLock;
 	private final Monitor queueEmptyStatus;
 	private final Consumer<String> usernameInitializer;
+	private final Runnable readInterrupt;
 
 	public Server_WriteThread(
 			SocketIO.ObjectStreamIO socketIO,
@@ -31,7 +33,8 @@ public class Server_WriteThread
 			Map<String, BlockingDeque<Msg>> userMessageQueues,
 			Monitor queueEmptyStatus,
 			Monitor usersLock,
-			Consumer<String> usernameInitializer
+			Consumer<String> usernameInitializer,
+			Runnable readInterrupt
 	) {
 		this.username = null;
 		this.socketIO = socketIO;
@@ -40,6 +43,7 @@ public class Server_WriteThread
 		this.queueEmptyStatus = queueEmptyStatus;
 		this.usersLock = usersLock;
 		this.usernameInitializer = usernameInitializer;
+		this.readInterrupt = readInterrupt;
 
 		this.setName(this.getLogHead());
 	}
@@ -243,6 +247,17 @@ public class Server_WriteThread
 					}
 				}
 			}
+		} catch (SocketException e) {
+			this.usersLock.lock();
+			try {
+				if (this.username != null) {
+					this.userMessageQueues.remove(this.username);
+				}
+				this.readInterrupt.run();
+			} finally {
+				this.usersLock.unlock();
+			}
+
 		} catch (IOException | ClassNotFoundException | InterruptedException e) {
 			throw new RuntimeException(e);
 		}

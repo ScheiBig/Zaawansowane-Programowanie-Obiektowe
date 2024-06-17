@@ -60,7 +60,8 @@ public class Server
 						this.userMessageQueues,
 						queueEmptyStatus,
 						this.usersLock,
-						rt::initUsername
+						rt::initUsername,
+						rt::interrupt
 				).start();
 			}
 		} catch (IOException e) {

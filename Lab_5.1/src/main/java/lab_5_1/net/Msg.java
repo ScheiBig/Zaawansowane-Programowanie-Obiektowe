@@ -74,6 +74,7 @@ public sealed abstract class Msg
 					
 					Usernames are session-based - after you  log out, your username becomes free
 					to take again.
+					--------------------------------------------------------------------------------
 					""";
 		}
 
@@ -114,6 +115,7 @@ public sealed abstract class Msg
 					LIST_USERS
 					--------------------------------------------------------------------------------
 					Prints list of usernames of users in chat.
+					--------------------------------------------------------------------------------
 					""";
 		}
 
@@ -166,7 +168,8 @@ public sealed abstract class Msg
 					this command.
 					
 					User must be currently registered in chat - for list of available users to chat
-					with type `LIST_USERS`
+					with type `LIST_USERS`.
+					--------------------------------------------------------------------------------
 					""";
 		}
 
@@ -212,7 +215,8 @@ public sealed abstract class Msg
 					Sends message to all users in chat.
 					
 					There must be at least one user currently registered in chat - for list of
-					available users to chat with type `LIST_USERS`
+					available users to chat with type `LIST_USERS`.
+					--------------------------------------------------------------------------------
 					""";
 		}
 
@@ -258,6 +262,7 @@ public sealed abstract class Msg
 					
 					Exiting via `EXIT` command ensures, that you receive all pending messages sent
 					to you before quiting.
+					--------------------------------------------------------------------------------
 					""";
 		}
 
@@ -304,6 +309,7 @@ public sealed abstract class Msg
 					<username> <message> - (SEND_TO command) sends direct message to specified user.
 					ALL <message> - Sends message to all users in chat.
 					EXIT - Exits from chat in safe manner.
+					--------------------------------------------------------------------------------
 					""";
 		}
 

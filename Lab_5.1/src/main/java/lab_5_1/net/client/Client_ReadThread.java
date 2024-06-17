@@ -54,23 +54,29 @@ public class Client_ReadThread
 							}
 							break;
 						}
-						this.outLock.lock();
-						try {
+						if (tokens[1].equals(Msg.Success) && tokens[0].equals(Msg.Register.Cmd)) {
+							this.outLock.lock();
+							try {
+								System.out.println("~SERVER~: Successfully registered.");
+							} finally {
+								this.outLock.unlock();
+							}
+							if (tokens[0].startsWith(Msg.Register.Cmd) &&
+									tokens[1].equals(Msg.Success)) {
+								this.usernameInitializer.run();
+							}
+							break;
+						}
+						if (!tokens[1].equals(Msg.Success)) {
 							System.err.println("~SERVER~: " + tokens[1]);
 							System.err.println("\t@ " + tokens[0]);
-						} finally {
-							this.outLock.unlock();
-						}
-						if (tokens[0].startsWith(Msg.Register.Cmd) &&
-								tokens[1].equals(Msg.Success)) {
-							this.usernameInitializer.run();
 						}
 					}
 
 					case Msg.SendTo msg -> {
 						this.outLock.lock();
 						try {
-							System.out.println(msg.username + ": " + msg.username);
+							System.out.println(msg.username + ": " + msg.message);
 						} finally {
 							this.outLock.unlock();
 						}
@@ -82,12 +88,15 @@ public class Client_ReadThread
 					case Set users -> {
 						this.outLock.lock();
 						try {
-							System.out.println("~AVAILABLE USERS~: [");
-							for (var user : users) {
-								System.out.println("\t" + user);
+							if (users.isEmpty()) {
+								System.out.println("~AVAILABLE USERS : nobody~");
+							} else {
+								System.out.println("~AVAILABLE USERS~: [");
+								for (var user : users) {
+									System.out.println("\t" + user);
+								}
+								System.out.println("]");
 							}
-							System.out.println("]");
-
 						} finally {
 							this.outLock.unlock();
 						}

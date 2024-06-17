@@ -1,5 +1,6 @@
 package lab_5_1.net.client;
 
+import lab_5_1.net.Msg;
 import utilx.concurrent.locks.Monitor;
 import utilx.net.SocketIO;
 
@@ -37,6 +38,14 @@ public class Client
 			write.start();
 			var read = new Client_ReadThread(socketIO, write::initUsername, this.outLock);
 			read.start();
+
+			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+				try {
+					socketIO.out().writeObject(new Msg.Exit(null));
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
+			}));
 
 			write.join();
 			read.join();
