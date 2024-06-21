@@ -1,9 +1,11 @@
 package lab_5_2;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import lab_5_2.client.ClientController;
 
 public class ClientApplication
@@ -16,12 +18,14 @@ public class ClientApplication
 		var fxmlLoader = new FXMLLoader(ClientController.class.getResource("client-view.fxml"));
 		var scene = new Scene(fxmlLoader.load());
 
-		primaryStage.setTitle("Client");
+		primaryStage.setTitle("Klient");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 
-		var controller = (ClientController)fxmlLoader.getController();
-		controller.launch();
+		var controller = (ClientController) fxmlLoader.getController();
+		controller.binding_initialize();
+
+		primaryStage.setOnCloseRequest(e -> controller.disconnectionMenuItem_onAction(null));
 	}
 
 	public static void main(String[] args) {
