@@ -6,5 +6,6 @@ module lab_5_2 {
 
 	opens lab_5_2 to javafx.fxml;
 	opens lab_5_2.client to javafx.fxml;
+	opens lab_5_2.server to javafx.fxml;
 	exports lab_5_2;
 }

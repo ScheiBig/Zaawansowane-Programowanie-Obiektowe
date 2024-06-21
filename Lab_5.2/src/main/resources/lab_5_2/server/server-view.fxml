@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Circle?>
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="lab_5_2.server.ServerController"
+            prefHeight="400.0" prefWidth="600.0">
+    <BorderPane AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+        <top>
+            <MenuBar>
+                <Menu text="Serwer">
+                    <MenuItem fx:id="launchMenuItem" text="Uruchom serwer"
+                              onAction="#launchMenuItem_onAction"/>
+                    <MenuItem fx:id="stopMenuItem" text="Zatrzymaj serwer"
+                              onAction="#stopMenuItem_onAction"
+                              visible="false"/>
+                </Menu>
+            </MenuBar>
+        </top>
+        <center>
+            <BorderPane fx:id="circleContainerBorderPane" style="-fx-background-color: WHITE;">
+                <center>
+                    <Circle radius="10.0" fx:id="circle"/>
+                </center>
+            </BorderPane>
+        </center>
+        <bottom>
+            <HBox fx:id="statusBar"
+                  style="-fx-border-color: #b5b5b5;
+                         -fx-border-style: solid;
+                         -fx-border-width: 1.0 0 0 0;">
+                <Label fx:id="networkLabel" text="Serwer nie uruchomiony">
+                    <padding>
+                        <Insets top="3.0" right="6.0" bottom="3.0" left="6.0"/>
+                    </padding>
+                </Label>
+            </HBox>
+        </bottom>
+    </BorderPane>
+</AnchorPane>
