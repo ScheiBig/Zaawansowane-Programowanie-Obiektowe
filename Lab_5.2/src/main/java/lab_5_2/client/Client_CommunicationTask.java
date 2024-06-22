@@ -35,7 +35,7 @@ public class Client_CommunicationTask
 		this.messageQueue = new LinkedBlockingDeque<>();
 	}
 
-	public boolean add(@NotNull Double sliderValue) {
+	public boolean add(Double sliderValue) {
 		if (System.currentTimeMillis() - this.lastMessage_timestamp < this.debounce_ms) {
 			return false;
 		}

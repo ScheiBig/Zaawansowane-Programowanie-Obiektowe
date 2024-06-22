@@ -63,7 +63,7 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 	 * @return New result
 	 * @param <V> Type of value
 	 */
-	public static <V> Result<V, Throwable> success(@NotNull V value) {
+	public static <V> Result<V, Throwable> success(V value) {
 		return new Res<>(value, null);
 	}
 
@@ -73,7 +73,7 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 	 * @return New result
 	 * @param <T> Type of Error
 	 */
-	public static <T extends Throwable> Result<Object, T> failure(@NotNull T error) {
+	public static <T extends Throwable> Result<Object, T> failure(T error) {
 		return new Res<>(null, error);
 	}
 
@@ -86,7 +86,7 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 	 * @param <V> Type of value
 	 */
 	public static <V> Result<V, Throwable> from(
-			@NotNull ThrowingSupplier<V> call
+			ThrowingSupplier<V> call
 	) {
 		try {
 			return success(call.get());
@@ -103,7 +103,7 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 	 * @return New result
 	 */
 	public static Result<Void, Throwable> from(
-			@NotNull ThrowingRunnable call
+			ThrowingRunnable call
 	) {
 		try {
 			call.run();
@@ -189,7 +189,7 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 		 * @return New result
 		 * @param <T> Type of Error
 		 */
-		public static <T extends Throwable> Result<Optional<Void>, T> failure(@NotNull T error) {
+		public static <T extends Throwable> Result<Optional<Void>, T> failure(T error) {
 			return new op<>(null, error);
 		}
 
@@ -202,7 +202,7 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 		 * @param <V> Type of value
 		 */
 		public static <V> Result<Optional<V>, Throwable> from(
-				@NotNull ThrowingSupplier<V> call
+				ThrowingSupplier<V> call
 		) {
 			try {
 				return success(call.get());
@@ -219,7 +219,7 @@ public class Res<V, E extends Throwable> implements Result<V, E> {
 		 * @return New result
 		 */
 		public static Result<Optional<Void>, Throwable> from(
-				@NotNull ThrowingRunnable call
+				ThrowingRunnable call
 		) {
 			try {
 				call.run();

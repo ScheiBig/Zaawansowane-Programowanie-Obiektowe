@@ -41,7 +41,10 @@ public class Client
 
 			Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 				try {
-					socketIO.out().writeObject(new Msg.Exit(null));
+					if (!socket.isClosed()) {
+						socketIO.out()
+								.writeObject(new Msg.Exit(null));
+					}
 				} catch (IOException e) {
 					throw new RuntimeException(e);
 				}

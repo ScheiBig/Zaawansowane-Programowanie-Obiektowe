@@ -109,7 +109,7 @@ public class Client_WriteThread
 							if (input.length == 1) {
 								System.out.print(Msg.Help.help());
 							} else {
-								switch (input[1]) {
+								switch (input[1].toUpperCase()) {
 									case Msg.Register.Cmd -> {
 										System.out.print(Msg.Register.help());
 									}
